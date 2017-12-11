@@ -11,7 +11,7 @@
     "psr-4": {"Clinikal\\ComposerInstallersClinikalExtender\\": "src/"}
   },
   "extra": {
-    "class": "OomphInc\\ComposerInstallersExtender\\Plugin"
+    "class": "Clinikal\\ComposerInstallersClinikalExtender\\Plugin"
   },
   "require": {
     "composer-plugin-api": "^1.0",
