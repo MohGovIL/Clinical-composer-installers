@@ -10,6 +10,9 @@
   "autoload": {
     "psr-4": {"Clinikal\\ComposerInstallersClinikalExtender\\": "src/"}
   },
+  "extra": {
+    "class": "OomphInc\\ComposerInstallersExtender\\Plugin"
+  },
   "require": {
     "composer/installers": "^1.0",
     "oomphinc/composer-installers-extender": "^1.1"
