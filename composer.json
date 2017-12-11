@@ -1,0 +1,17 @@
+{
+  "name": "clinikal/composer-installers-clinikal-extender",
+  "description": "Extend the composer/installers plugin to enable custom behavior for clinikal packages.",
+  "type": "composer-plugin",
+  "authors": [
+    {
+      "name": "Clinikal team"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"Clinikal\\ComposerInstallersClinikalExtender\\": "src/"}
+  },
+  "require": {
+    "composer/installers": "^1.0",
+    "oomphinc/composer-installers-extender": "^1.1"
+  }
+}
