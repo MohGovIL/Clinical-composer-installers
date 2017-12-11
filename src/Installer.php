@@ -11,6 +11,8 @@ namespace Clinikal\ComposerInstallersClinikalExtender;
 use Composer\Installer\LibraryInstaller;
 use Composer\Installers\Installer as ComposerInstaller;
 use OomphInc\ComposerInstallersExtender\Installer as ExtenderInstaller;
+use Composer\Package\PackageInterface;
+use Composer\Repository\InstalledRepositoryInterface ;
 
 /**
  * Class Installer
@@ -19,6 +21,7 @@ use OomphInc\ComposerInstallersExtender\Installer as ExtenderInstaller;
  */
 class Installer extends ExtenderInstaller
 {
+
     /**
      * {@inheritDoc}
      */
@@ -26,8 +29,6 @@ class Installer extends ExtenderInstaller
     {
         LibraryInstaller::install($repo,$package);
 
-        echo $this->packageTypes;
-        echo $this->getInstallPath();
     }
 
 
@@ -38,8 +39,23 @@ class Installer extends ExtenderInstaller
     {
         LibraryInstaller::update($repo,$initial, $target);
 
-        echo $this->packageTypes;
-        echo $this->getInstallPath();
+        if ($target->getType() === 'openemr-formhandler-forms') {
+            copy($this->vendorDir .'/../' .$this->getInstallPath($target).'/'. explode('/',$target->getName())[1].'.json', $this->vendorDir .'/../clinikal/install/couchDB/forms/backup_data/'. explode('/',$target->getName())[1].'.json');
+        }
+
+        /*print_r($target->getName());
+        echo '\n';
+        print_r($target->getPrettyName());
+        echo '\n';
+        print_r($target->getId());
+        echo '\n';
+        print_r($target->getTargetDir());
+        echo $target;
+        print_r($this->vendorDir);
+        print_r($initial->getType());
+        print_r($this->getInstallPath($initial));*/
 
     }
+
+
 }
