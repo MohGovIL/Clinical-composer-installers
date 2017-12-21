@@ -13,6 +13,7 @@ use Composer\Installers\Installer as ComposerInstaller;
 use OomphInc\ComposerInstallersExtender\Installer as ExtenderInstaller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
+use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 
 /**
  * Class Installer
@@ -24,6 +25,9 @@ class Installer extends ExtenderInstaller
     const VERTICAL_ADDONS = 'clinikal-vertical';
     const ZF_MODULES = 'openemr-zf-modules';
     const FORMHANDLER_FORMS = 'openemr-formhandler-forms';
+    const RED="\033[31m";
+    const NC="\033[0m";
+    const CYAN="\033[36m";
 
     private $basePath;
 
@@ -50,7 +54,7 @@ class Installer extends ExtenderInstaller
         switch ($package->getType())
         {
             case self::FORMHANDLER_FORMS:
-
+                FormhandlerActions::copyCouchDbJson($this, $package);
                 break;
         }
 
@@ -65,8 +69,12 @@ class Installer extends ExtenderInstaller
         $this->initClinikal();
         LibraryInstaller::update($repo,$initial, $target);
 
-        if ($target->getType() === 'openemr-formhandler-forms') {
-            copy($this->basePath .$this->getInstallPath($target).'/'. explode('/',$target->getName())[1].'.json', $this->basePath .'clinikal/install/couchDB/forms/backup_data/'. explode('/',$target->getName())[1].'.json');
+        //spacial actions per package type
+        switch ($target->getType())
+        {
+            case self::FORMHANDLER_FORMS:
+                FormhandlerActions::copyCouchDbJson($this, $target);
+                break;
         }
 
         /*print_r($target->getName());
@@ -86,7 +94,7 @@ class Installer extends ExtenderInstaller
     private function appendToGitignore($ignoreFile)
     {
         file_put_contents($this->basePath.'.gitignore', PHP_EOL . $ignoreFile, FILE_APPEND);
-        $this->messageToCLI('Add to .gitignore - ' . $ignoreFile);
+        $this->messageToCLI('Adding to .gitignore - ' . $ignoreFile);
     }
 
     private function getFolderName($fullName)
@@ -97,7 +105,7 @@ class Installer extends ExtenderInstaller
 
     private function messageToCLI($message)
     {
-        fwrite(STDOUT,$message . PHP_EOL);
+        fwrite(STDOUT,self::CYAN . $message . self::NC . PHP_EOL);
     }
 
 
