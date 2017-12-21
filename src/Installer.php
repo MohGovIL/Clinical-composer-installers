@@ -29,7 +29,7 @@ class Installer extends ExtenderInstaller
     const NC="\033[0m";
     const CYAN="\033[36m";
 
-    private $basePath;
+    public $basePath;
 
 
     /**
