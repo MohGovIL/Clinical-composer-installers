@@ -30,6 +30,7 @@ class Installer extends ExtenderInstaller
     const CYAN="\033[36m";
 
     public $basePath;
+    public $clinikalPath;
 
 
     /**
@@ -38,6 +39,11 @@ class Installer extends ExtenderInstaller
     private function initClinikal()
     {
         $this->basePath = dirname($this->vendorDir) .'/';
+        $this->clinikalPath = $this->basePath . 'clinikal/';
+        //require functions for db connection form 'clinikal' folder
+        require $this->clinikalPath . 'scripts/dbConnect.php';
+        require $this->clinikalPath . 'install/upgrade/functions/clinikal_sql_upgrade_fx.php';
+        require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
     }
     
     /**
@@ -55,6 +61,7 @@ class Installer extends ExtenderInstaller
         {
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::copyCouchDbJson($this, $package);
+                FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
         }
 
@@ -94,7 +101,7 @@ class Installer extends ExtenderInstaller
     private function appendToGitignore($ignoreFile)
     {
         file_put_contents($this->basePath.'.gitignore', PHP_EOL . $ignoreFile, FILE_APPEND);
-        $this->messageToCLI('Adding to .gitignore - ' . $ignoreFile);
+        self::messageToCLI('Adding to .gitignore - ' . $ignoreFile);
     }
 
     private function getFolderName($fullName)
@@ -103,9 +110,9 @@ class Installer extends ExtenderInstaller
         return !is_null($folderName) ? $folderName : $prefixName;
     }
 
-    private function messageToCLI($message)
+    static function messageToCLI($message)
     {
-        fwrite(STDOUT,self::CYAN . $message . self::NC . PHP_EOL);
+        fwrite(STDOUT,self::CYAN . $message . self::NC . PHP_EOL . PHP_EOL);
     }
 
 

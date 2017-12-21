@@ -16,9 +16,22 @@ class FormhandlerActions
 
     const FORMS_JSON_PATH = 'clinikal/install/couchDB/forms/backup_data/';
 
+    /**
+     * copy form json to backup data folder - the upgrade script sends a json to couchdDB from there.
+     * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
+     * @param PackageInterface $package
+     */
     static function copyCouchDbJson(Installer $installer, PackageInterface $package)
     {
-        copy($installer->basePath . $installer->getInstallPath($package).'/'. explode('/',$package->getName())[1].'.json', $installer->basePath . self::FORMS_JSON_PATH . explode('/',$package->getName())[1].'.json');
+        $packageName = explode('/',$package->getName())[1];
+        //copy json to clinikal/install/couchDB/forms/backup_data/
+        copy($installer->basePath . $installer->getInstallPath($package).'/'. $packageName .'.json', $installer->basePath . self::FORMS_JSON_PATH . $packageName.'.json');
+        Installer::messageToCLI($packageName .'.json has copied to clinikal/install/couchDB/forms/backup_data');
+    }
+
+    static function installTable(Installer $installer,$packagePath)
+    {
+        upgradeFromSqlFile($installer->basePath.$packagePath.'/table.sql');
     }
 
 
