@@ -49,6 +49,12 @@ class Installer extends ExtenderInstaller
         $this->setEnvSettings();
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
+            //for connection with ssl
+            $GLOBALS['debug_ssl_mysql_connection'] = false;
+            require $this->basePath . 'library/acl.inc';
+            if (isset ($phpgacl_location)) {
+                include_once("$phpgacl_location/gacl_api.class.php");
+            }
             require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
             require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
         }
