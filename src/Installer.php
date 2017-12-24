@@ -78,10 +78,11 @@ class Installer extends ExtenderInstaller
         self::messageToCLI("Running sql queries for installation");
         upgradeFromSqlFile($this->basePath.$this->getInstallPath($package).'/sql/install.sql');
 
-        echo $this->isZero . '\n' .  $this->isDevEnv;
+
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
-
+            self::messageToCLI("Installing acl settings");
+            require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
         }
     }
 
@@ -130,14 +131,27 @@ class Installer extends ExtenderInstaller
 
     private function setEnvSettings()
     {
-        $result = sqlQuery("SELECT gl_name, gl_value FROM globals WHERE gl_name IN('clinikal_env', 'zero_installation_type')");
-        $this->isDevEnv = ($result['clinikal_env'] && $result['clinikal_env'] == 'dev') ? true : false;
-        $this->isZero = ($result['zero_installation_type'] && is_string($result['zero_installation_type'])) ? true : false;
+        $sql = "SELECT gl_name, gl_value FROM globals WHERE gl_name IN('clinikal_env', 'zero_installation_type')";
+        $stmt = \DBconnect::getConnection()->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $this->isZero = false;
+        foreach ($results as $result)
+            switch ($result['gl_name']) {
+                case 'clinikal_env':
+                    $this->isDevEnv = ($result['gl_value'] && $result['gl_value'] == 'development') ? true : false;
+                    break;
+                case 'zero_installation_type':
+                    $this->isZero = ($result['gl_value'] && !empty($result['gl_value'])) ? true : false;
+                    break;
+            }
+
     }
 
     static function messageToCLI($message)
     {
-        fwrite(STDOUT,'\t*' .self::CYAN . $message . self::NC . PHP_EOL);
+        fwrite(STDOUT," *" .self::CYAN . $message . self::NC . PHP_EOL);
     }
 
 
