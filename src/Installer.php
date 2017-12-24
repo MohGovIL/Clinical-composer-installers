@@ -31,6 +31,8 @@ class Installer extends ExtenderInstaller
 
     public $basePath;
     public $clinikalPath;
+    public $isDevEnv;
+    public $isZero;
 
 
     /**
@@ -43,7 +45,14 @@ class Installer extends ExtenderInstaller
         //require functions for db connection form 'clinikal' folder
         require $this->clinikalPath . 'scripts/dbConnect.php';
         require $this->clinikalPath . 'install/upgrade/functions/clinikal_sql_upgrade_fx.php';
-        require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
+
+        $this->setEnvSettings();
+        // acl environment
+        if ($this->isZero || $this->isDevEnv) {
+            require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
+            require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
+        }
+
     }
     
     /**
@@ -65,6 +74,15 @@ class Installer extends ExtenderInstaller
                 break;
         }
 
+        //run sql queries for installation
+        self::messageToCLI("Running sql queries for installation");
+        upgradeFromSqlFile($this->basePath.$this->getInstallPath($package).'/sql/install.sql');
+
+        echo $this->isZero . '\n' .  $this->isDevEnv;
+        // acl environment
+        if ($this->isZero || $this->isDevEnv) {
+
+        }
     }
 
 
@@ -110,9 +128,16 @@ class Installer extends ExtenderInstaller
         return !is_null($folderName) ? $folderName : $prefixName;
     }
 
+    private function setEnvSettings()
+    {
+        $result = sqlQuery("SELECT gl_name, gl_value FROM globals WHERE gl_name IN('clinikal_env', 'zero_installation_type')");
+        $this->isDevEnv = ($result['clinikal_env'] && $result['clinikal_env'] == 'dev') ? true : false;
+        $this->isZero = ($result['zero_installation_type'] && is_string($result['zero_installation_type'])) ? true : false;
+    }
+
     static function messageToCLI($message)
     {
-        fwrite(STDOUT,self::CYAN . $message . self::NC . PHP_EOL . PHP_EOL);
+        fwrite(STDOUT,'\t*' .self::CYAN . $message . self::NC . PHP_EOL);
     }
 
 
