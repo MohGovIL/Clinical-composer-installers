@@ -90,6 +90,8 @@ class Installer extends ExtenderInstaller
             self::messageToCLI("Installing acl settings");
             require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
         }
+
+        self::messageToCLI('   -------------------------  ' . PHP_EOL);
     }
 
 
@@ -137,6 +139,7 @@ class Installer extends ExtenderInstaller
             }
         }
 
+        self::messageToCLI('   -------------------------  ' . PHP_EOL);
 
     }
 
@@ -197,7 +200,7 @@ class Installer extends ExtenderInstaller
 
     static function messageToCLI($message)
     {
-        fwrite(STDOUT," *" .self::CYAN . $message . self::NC . PHP_EOL);
+        fwrite(STDOUT,"*" .self::CYAN . $message . self::NC . PHP_EOL);
     }
 
 
