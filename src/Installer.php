@@ -177,7 +177,7 @@ class Installer extends ExtenderInstaller
         $versions = array();
         while (false !== ($sfname = readdir($dh))) {
             if (substr($sfname, 0, 1) == '.') continue;
-            if (preg_match('/^(\d+)_(\d+)_(\d+)-to-\d+_\d+_\d+_upgrade.sql$/', $sfname, $matches)) {
+            if (preg_match('/^\d+_\d+_\d+-to-(\d+)_(\d+)_(\d+)_upgrade.sql$/', $sfname, $matches)) {
                 $version = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
                 $versions[$version] = $sfname;
             }
