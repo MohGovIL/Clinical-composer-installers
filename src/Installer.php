@@ -100,6 +100,7 @@ class Installer extends ExtenderInstaller
     {
         $this->initClinikal();
 
+        //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
         $lastTag = $initial->isDev() ? $this->getLastTag($this->basePath.$this->getInstallPath($initial)) : $initial->getPrettyVersion();
         $lastTag = substr($lastTag,1,strlen($lastTag));
 
@@ -113,32 +114,28 @@ class Installer extends ExtenderInstaller
                 FormhandlerActions::copyCouchDbJson($this, $target);
                 break;
         }
-        echo $initial->version;
-        echo $target->version;
+
         #acl upgrade
         $sqlFolder = $this->basePath.$this->getInstallPath($target).'/sql';
         $filesList = $this->getUpgradeFilesList($sqlFolder);
 
-        /*$form_old_openemr_version = !empty($openemrLastVersion) ? $openemrLastVersion : '5.0.0';
-
         foreach ($filesList as $version => $filename) {
             //   print_r($form_old_version);
-            if (strcmp($version, $form_old_openemr_version) < 0) continue;
+            if (strcmp($version, $lastTag) < 0) continue;
             upgradeFromSqlFile($sqlFolder .'/'.$filename);
-        }*/
+        }
 
+        // acl environment
+        if ($this->isZero || $this->isDevEnv) {
 
-        /*print_r($target->getName());
-        echo '\n';
-        print_r($target->getPrettyName());
-        echo '\n';
-        print_r($target->getId());
-        echo '\n';
-        print_r($target->getTargetDir());
-        echo $target;
-        print_r($this->vendorDir);
-        print_r($initial->getType());
-        print_r($this->getInstallPath($initial));*/
+            require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
+            foreach ($ACL_UPGRADE as $version => $function){
+                if (strcmp($version, $lastTag) < 0) continue;
+                    $function();
+
+            }
+        }
+
 
     }
 
