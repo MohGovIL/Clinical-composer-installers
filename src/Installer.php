@@ -115,7 +115,8 @@ class Installer extends ExtenderInstaller
                 break;
         }
 
-        #acl upgrade
+        #sql upgrade
+        self::messageToCLI('Upgrading sql from version ' . $lastTag);
         $sqlFolder = $this->basePath.$this->getInstallPath($target).'/sql';
         $filesList = $this->getUpgradeFilesList($sqlFolder);
 
@@ -127,7 +128,7 @@ class Installer extends ExtenderInstaller
 
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
-
+            self::messageToCLI('Upgrading acl from version ' . $lastTag);
             require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
                 if (strcmp($version, $lastTag) < 0) continue;
