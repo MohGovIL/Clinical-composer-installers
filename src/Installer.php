@@ -91,7 +91,7 @@ class Installer extends ExtenderInstaller
             require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
         }
 
-        self::messageToCLI('   -------------------------  ' . PHP_EOL);
+        self::messageToCLI('----- INSTALL ' . strtoupper($package->getName()) . ' WAS FINISHED ------' . PHP_EOL);
     }
 
 
@@ -139,7 +139,7 @@ class Installer extends ExtenderInstaller
             }
         }
 
-        self::messageToCLI('   -------------------------  ' . PHP_EOL);
+        self::messageToCLI('----- UPDATE ' . strtoupper($target->getName()) . ' WAS FINISHED ------' . PHP_EOL);
 
     }
 
