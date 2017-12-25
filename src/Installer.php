@@ -36,7 +36,7 @@ class Installer extends ExtenderInstaller
 
 
     /**
-     * init private properties and object for this class
+     * init private properties and objects for clinikal project
      */
     private function initClinikal()
     {
@@ -99,6 +99,11 @@ class Installer extends ExtenderInstaller
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
         $this->initClinikal();
+
+        $lastTag = $initial->isDev() ? $this->getLastTag($this->basePath.$this->getInstallPath($initial)) : $initial->getPrettyVersion();
+        $lastTag = substr($lastTag,1,strlen($lastTag));
+
+        // composer update
         LibraryInstaller::update($repo,$initial, $target);
 
         //spacial actions per package type
@@ -108,6 +113,20 @@ class Installer extends ExtenderInstaller
                 FormhandlerActions::copyCouchDbJson($this, $target);
                 break;
         }
+        echo $initial->version;
+        echo $target->version;
+        #acl upgrade
+        $sqlFolder = $this->basePath.$this->getInstallPath($target).'/sql';
+        $filesList = $this->getUpgradeFilesList($sqlFolder);
+
+        /*$form_old_openemr_version = !empty($openemrLastVersion) ? $openemrLastVersion : '5.0.0';
+
+        foreach ($filesList as $version => $filename) {
+            //   print_r($form_old_version);
+            if (strcmp($version, $form_old_openemr_version) < 0) continue;
+            upgradeFromSqlFile($sqlFolder .'/'.$filename);
+        }*/
+
 
         /*print_r($target->getName());
         echo '\n';
@@ -153,6 +172,29 @@ class Installer extends ExtenderInstaller
                     break;
             }
 
+    }
+
+    private function getUpgradeFilesList($upgradeFolder)
+    {
+        $dh = opendir($upgradeFolder);
+        $versions = array();
+        while (false !== ($sfname = readdir($dh))) {
+            if (substr($sfname, 0, 1) == '.') continue;
+            if (preg_match('/^(\d+)_(\d+)_(\d+)-to-\d+_\d+_\d+_upgrade.sql$/', $sfname, $matches)) {
+                $version = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
+                $versions[$version] = $sfname;
+            }
+        }
+        closedir($dh);
+        ksort($versions);
+
+        return $versions;
+    }
+
+    private function getLastTag($pathToPackage)
+    {
+        $tag =  shell_exec("cd $pathToPackage && git describe --tags --abbrev=0");
+        return is_null($tag) ? 'v0.1.0' : $tag;
     }
 
     static function messageToCLI($message)
