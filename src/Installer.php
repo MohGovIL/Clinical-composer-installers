@@ -34,6 +34,7 @@ class Installer extends ExtenderInstaller
     public $clinikalPath;
     public $isDevEnv;
     public $isZero;
+    private $isInit = false;
 
 
     /**
@@ -41,6 +42,8 @@ class Installer extends ExtenderInstaller
      */
     private function initClinikal()
     {
+        if($this->isInit)return;
+
         $this->basePath = dirname($this->vendorDir) .'/';
         $this->clinikalPath = $this->basePath . 'clinikal/';
         //require functions for db connection form 'clinikal' folder
@@ -60,6 +63,7 @@ class Installer extends ExtenderInstaller
             require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
         }
 
+        $this->isInit = true;
     }
     
     /**
