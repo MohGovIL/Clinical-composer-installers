@@ -23,9 +23,11 @@ use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
  */
 class Installer extends ExtenderInstaller
 {
-    const VERTICAL_ADDONS = 'clinikal-vertical';
+    /* custom packages's types */
+    const VERTICAL_ADDONS = 'clinikal-vertical-addons';
     const ZF_MODULES = 'openemr-zf-modules';
     const FORMHANDLER_FORMS = 'openemr-formhandler-forms';
+
     const RED="\033[31m";
     const NC="\033[0m";
     const CYAN="\033[36m";
@@ -81,7 +83,6 @@ class Installer extends ExtenderInstaller
                 break;
             case self::ZF_MODULES:
                 Zf2ModulesActions::addToApplicationConf($this,$package->getName());
-
         }
 
         //run sql queries for installation
@@ -121,7 +122,7 @@ class Installer extends ExtenderInstaller
         }
 
         #sql upgrade
-        self::messageToCLI('Upgrading sql from version ' . $lastTag);
+        self::messageToCLI('Upgrading sql from version ' . $lastTag . '.');
         $sqlFolder = $this->basePath.$this->getInstallPath($target).'/sql';
         $filesList = $this->getUpgradeFilesList($sqlFolder);
 
@@ -133,7 +134,7 @@ class Installer extends ExtenderInstaller
 
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
-            self::messageToCLI('Upgrading acl from version ' . $lastTag);
+            self::messageToCLI('Upgrading acl from version ' . $lastTag . '.');
             $ACL_UPGRADE = require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
                 if (strcmp($version, $lastTag) < 0) continue;
