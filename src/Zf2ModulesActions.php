@@ -21,7 +21,7 @@ class Zf2ModulesActions
         $modName = explode('/',$packageName)[1];
         $configs = require $installer->basePath.self::APPLICATION_CONF_PATH;
         $configs['modules'][] = $modName;
-        file_put_contents($installer->basePath.self::APPLICATION_CONF_PATH,print_r($configs,true));
+        file_put_contents($installer->basePath.self::APPLICATION_CONF_PATH,'<?php return ' . var_export($configs,true) . ';');
 
     }
 
