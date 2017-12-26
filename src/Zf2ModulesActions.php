@@ -19,10 +19,10 @@ class Zf2ModulesActions
     static function addToApplicationConf(Installer $installer, $packageName)
     {
         $modName = explode('/',$packageName)[1];
-        $oldConfig = require $installer->basePath.self::APPLICATION_CONF_PATH;
-        $lastModuleKey = key(end($oldConfig['modules']));
-        $oldConfig['modules']["'". $lastModuleKey + 1 ."'"] = $modName;
-        print_r($oldConfig);
+        $configs = require $installer->basePath.self::APPLICATION_CONF_PATH;
+        $configs['modules'][] = $modName;
+        file_put_contents($installer->basePath.self::APPLICATION_CONF_PATH,'<?php return ' . var_export($configs,true) . ';');
+
     }
 
 
