@@ -14,6 +14,7 @@ use OomphInc\ComposerInstallersExtender\Installer as ExtenderInstaller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
+use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 
 /**
  * Class Installer
@@ -78,12 +79,14 @@ class Installer extends ExtenderInstaller
                 FormhandlerActions::copyCouchDbJson($this, $package);
                 FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
+            case self::ZF_MODULES:
+                Zf2ModulesActions::addToApplicationConf($this,$package->getName());
+
         }
 
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation");
         upgradeFromSqlFile($this->basePath.$this->getInstallPath($package).'/sql/install.sql');
-
 
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
@@ -131,11 +134,10 @@ class Installer extends ExtenderInstaller
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
             self::messageToCLI('Upgrading acl from version ' . $lastTag);
-            require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
+            $ACL_UPGRADE = require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
                 if (strcmp($version, $lastTag) < 0) continue;
                     $function();
-
             }
         }
 
@@ -143,18 +145,20 @@ class Installer extends ExtenderInstaller
 
     }
 
+    /**
+     * add a package to .gitignore .
+     * @param $ignoreFile
+     */
     private function appendToGitignore($ignoreFile)
     {
         file_put_contents($this->basePath.'.gitignore', PHP_EOL . $ignoreFile, FILE_APPEND);
         self::messageToCLI('Adding to .gitignore - ' . $ignoreFile);
     }
 
-    private function getFolderName($fullName)
-    {
-        list($prefixName, $folderName) = explode('/',$fullName);
-        return !is_null($folderName) ? $folderName : $prefixName;
-    }
 
+    /**
+     * get from DB a globals of environment settings, and set those to private properties.
+     */
     private function setEnvSettings()
     {
         $sql = "SELECT gl_name, gl_value FROM globals WHERE gl_name IN('clinikal_env', 'zero_installation_type')";
@@ -175,6 +179,11 @@ class Installer extends ExtenderInstaller
 
     }
 
+    /**
+     * get list of sql upgrade files
+     * @param $upgradeFolder
+     * @return array
+     */
     private function getUpgradeFilesList($upgradeFolder)
     {
         $dh = opendir($upgradeFolder);
@@ -192,12 +201,20 @@ class Installer extends ExtenderInstaller
         return $versions;
     }
 
+    /**
+     *
+     * @param $pathToPackage
+     * @return string
+     */
     private function getLastTag($pathToPackage)
     {
         $tag =  shell_exec("cd $pathToPackage && git describe --tags --abbrev=0");
         return is_null($tag) ? 'v0.1.0' : $tag;
     }
 
+    /**
+     * @param $message
+     */
     static function messageToCLI($message)
     {
         fwrite(STDOUT,"*" .self::CYAN . $message . self::NC . PHP_EOL);
