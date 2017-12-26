@@ -84,7 +84,7 @@ class Installer extends ExtenderInstaller
                 FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
             case self::ZF_MODULES:
-                Zf2ModulesActions::addToApplicationConf($this,$package->getName());
+                Zf2ModulesActions::addToApplicationConf($this,$package->getPrettyName());
 
         }
 
@@ -98,7 +98,7 @@ class Installer extends ExtenderInstaller
             require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
         }
 
-        self::messageToCLI('----- INSTALL ' . strtoupper($package->getName()) . ' WAS FINISHED ------' . PHP_EOL);
+        self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
     }
 
 
