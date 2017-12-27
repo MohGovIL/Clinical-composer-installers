@@ -25,8 +25,8 @@ class Installer extends ExtenderInstaller
 {
     /* custom packages's types */
     const VERTICAL_ADDONS = 'clinikal-vertical-addons';
-    const ZF_MODULES = 'openemr-zf-modules';
-    const FORMHANDLER_FORMS = 'openemr-formhandler-forms';
+    const ZF_MODULES = 'clinikal-zf-modules';
+    const FORMHANDLER_FORMS = 'clinikal-formhandler-forms';
 
     const RED="\033[31m";
     const NC="\033[0m";

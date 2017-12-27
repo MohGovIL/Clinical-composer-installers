@@ -22,8 +22,7 @@ class Zf2ModulesActions
         $configs = require $installer->basePath.self::APPLICATION_CONF_PATH;
         $configs['modules'][] = $modName;
         file_put_contents($installer->basePath.self::APPLICATION_CONF_PATH,'<?php return ' . var_export($configs,true) . ';');
-
+        $installer::messageToCLI('Adding module ' . $modName . ' to application.config.php');
     }
-
 
 }
