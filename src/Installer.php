@@ -91,7 +91,9 @@ class Installer extends ExtenderInstaller
 
         }
 
-        $projectPath = strpos($this->getInstallPath($package), $this->basePath) > 0 ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
+        /* In packages without custom path $this->getInstallPath() return url with base path */
+        $projectPath = str_replace($this->basePath,'', $this->getInstallPath($package));
+
         $this->appendToGitignore($projectPath);
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
@@ -100,7 +102,7 @@ class Installer extends ExtenderInstaller
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
             self::messageToCLI("Installing acl for package - " .$package->getPrettyName());
-            require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
+            require $this->basePath.$projectPath.'/acl/acl_install.php';
         }
 
         self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
@@ -123,7 +125,8 @@ class Installer extends ExtenderInstaller
 
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
 
-        $projectPath = strpos($this->getInstallPath($target), $this->basePath) > 0 ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
+        /* In packages without custom path $this->getInstallPath() return url with base path */
+        $projectPath = str_replace($this->basePath,'', $this->getInstallPath($target));
 
         //spacial actions per package type
         switch ($target->getType())
