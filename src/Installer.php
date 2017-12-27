@@ -76,7 +76,6 @@ class Installer extends ExtenderInstaller
         $this->initClinikal();
         //composer install
         LibraryInstaller::install($repo,$package);
-        $this->appendToGitignore($this->getInstallPath($package));
 
         if($this->getPrefix($package->getType()) !== 'clinikal') return;
 
@@ -92,9 +91,11 @@ class Installer extends ExtenderInstaller
 
         }
 
+        $projectPath = strpos($this->getInstallPath($package), $this->basePath) > 0 ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
+        $this->appendToGitignore($projectPath);
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
-        upgradeFromSqlFile($this->basePath.$this->getInstallPath($package).'/sql/install.sql');
+        upgradeFromSqlFile($this->basePath.$projectPath.'/sql/install.sql');
 
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
@@ -122,6 +123,8 @@ class Installer extends ExtenderInstaller
 
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
 
+        $projectPath = strpos($this->getInstallPath($target), $this->basePath) > 0 ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
+
         //spacial actions per package type
         switch ($target->getType())
         {
@@ -132,7 +135,7 @@ class Installer extends ExtenderInstaller
 
         #sql upgrade
         self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
-        $sqlFolder = $this->basePath.$this->getInstallPath($target).'/sql';
+        $sqlFolder = $this->basePath.$projectPath.'/sql';
         $filesList = $this->getUpgradeFilesList($sqlFolder);
 
         foreach ($filesList as $version => $filename) {
@@ -144,7 +147,7 @@ class Installer extends ExtenderInstaller
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
             self::messageToCLI('Upgrading acl for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
-            $ACL_UPGRADE = require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
+            $ACL_UPGRADE = require $this->basePath.$projectPath.'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
                 if (strcmp($version, $lastTag) < 0) continue;
                     $function();
