@@ -78,6 +78,8 @@ class Installer extends ExtenderInstaller
         LibraryInstaller::install($repo,$package);
         $this->appendToGitignore($this->getInstallPath($package));
 
+        if($this->getPrefix($package->getType()) !== 'clinikal') return;
+
         //spacial actions per package type
         switch ($package->getType())
         {
@@ -91,12 +93,12 @@ class Installer extends ExtenderInstaller
         }
 
         //run sql queries for installation
-        self::messageToCLI("Running sql queries for installation");
+        self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         upgradeFromSqlFile($this->basePath.$this->getInstallPath($package).'/sql/install.sql');
 
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
-            self::messageToCLI("Installing acl settings");
+            self::messageToCLI("Installing acl for package - " .$package->getPrettyName());
             require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
         }
 
@@ -118,6 +120,8 @@ class Installer extends ExtenderInstaller
         // composer update
         LibraryInstaller::update($repo,$initial, $target);
 
+        if($this->getPrefix($initial->getType()) !== 'clinikal') return;
+
         //spacial actions per package type
         switch ($target->getType())
         {
@@ -127,7 +131,7 @@ class Installer extends ExtenderInstaller
         }
 
         #sql upgrade
-        self::messageToCLI('Upgrading sql from version ' . $lastTag . '.');
+        self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
         $sqlFolder = $this->basePath.$this->getInstallPath($target).'/sql';
         $filesList = $this->getUpgradeFilesList($sqlFolder);
 
@@ -139,7 +143,7 @@ class Installer extends ExtenderInstaller
 
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
-            self::messageToCLI('Upgrading acl from version ' . $lastTag . '.');
+            self::messageToCLI('Upgrading acl for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
             $ACL_UPGRADE = require $this->basePath.$this->getInstallPath($target).'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
                 if (strcmp($version, $lastTag) < 0) continue;
@@ -216,6 +220,11 @@ class Installer extends ExtenderInstaller
     {
         $tag =  shell_exec("cd $pathToPackage && git describe --tags --abbrev=0");
         return is_null($tag) ? 'v0.1.0' : $tag;
+    }
+
+    private function getPrefix($packageType)
+    {
+        return explode('-',$packageType)[0];
     }
 
     /**
