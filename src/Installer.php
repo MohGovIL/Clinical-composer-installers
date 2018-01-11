@@ -72,7 +72,7 @@ class Installer extends ExtenderInstaller
      * {@inheritDoc}
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
-    {   
+    {
         $this->initClinikal();
         //composer install
         LibraryInstaller::install($repo,$package);
@@ -91,8 +91,12 @@ class Installer extends ExtenderInstaller
 
         }
 
-        $projectPath = strpos($this->getInstallPath($package), $this->basePath) > 0 ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
-        $this->appendToGitignore($projectPath);
+        $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
+
+        if ( $this->isDevEnv) {
+            $this->appendToGitignore($projectPath);
+        }
+
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         upgradeFromSqlFile($this->basePath.$projectPath.'/sql/install.sql');
@@ -100,7 +104,7 @@ class Installer extends ExtenderInstaller
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
             self::messageToCLI("Installing acl for package - " .$package->getPrettyName());
-            require $this->basePath.$this->getInstallPath($package).'/acl/acl_install.php';
+            require $this->basePath.$projectPath.'/acl/acl_install.php';
         }
 
         self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
@@ -112,6 +116,7 @@ class Installer extends ExtenderInstaller
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
+
         $this->initClinikal();
 
         //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
@@ -123,7 +128,7 @@ class Installer extends ExtenderInstaller
 
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
 
-        $projectPath = strpos($this->getInstallPath($target), $this->basePath) > 0 ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
+        $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
 
         //spacial actions per package type
         switch ($target->getType())
