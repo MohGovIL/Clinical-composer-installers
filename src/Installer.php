@@ -91,10 +91,12 @@ class Installer extends ExtenderInstaller
 
         }
 
-        /* In packages without custom path $this->getInstallPath() return url with base path */
-        $projectPath = str_replace($this->basePath,'', $this->getInstallPath($package));
+        $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
 
-        $this->appendToGitignore($projectPath);
+        if ( $this->isDevEnv) {
+            $this->appendToGitignore($projectPath);
+        }
+
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         upgradeFromSqlFile($this->basePath.$projectPath.'/sql/install.sql');
@@ -114,6 +116,7 @@ class Installer extends ExtenderInstaller
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
+
         $this->initClinikal();
 
         //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
@@ -125,8 +128,7 @@ class Installer extends ExtenderInstaller
 
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
 
-        /* In packages without custom path $this->getInstallPath() return url with base path */
-        $projectPath = str_replace($this->basePath,'', $this->getInstallPath($target));
+        $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
 
         //spacial actions per package type
         switch ($target->getType())
