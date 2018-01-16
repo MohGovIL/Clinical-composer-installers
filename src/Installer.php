@@ -34,7 +34,7 @@ class Installer extends ExtenderInstaller
 
     public $basePath;
     public $clinikalPath;
-    public $isDevEnv;
+    public $clinikalEnv;
     public $isZero;
     private $isInit = false;
 
@@ -53,6 +53,7 @@ class Installer extends ExtenderInstaller
         require $this->clinikalPath . 'install/upgrade/functions/clinikal_sql_upgrade_fx.php';
 
         $this->setEnvSettings();
+
         // acl environment
         if ($this->isZero || $this->isDevEnv) {
             //for connection with ssl
@@ -93,8 +94,13 @@ class Installer extends ExtenderInstaller
 
         $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
 
-        if ( $this->isDevEnv) {
+        if ( $this->clinikalEnv != 'prod') {
             $this->appendToGitignore($projectPath);
+        } else {
+            // put .git in the ignore
+            $this->appendToGitignore($projectPath.'/.git');
+            //adding all the package to special repository for production installation.
+            shell_exec("git add $projectPath");
         }
 
         //run sql queries for installation
@@ -102,7 +108,7 @@ class Installer extends ExtenderInstaller
         upgradeFromSqlFile($this->basePath.$projectPath.'/sql/install.sql');
 
         // acl environment
-        if ($this->isZero || $this->isDevEnv) {
+        if ($this->isZero || $this->clinikalEnv == 'dev') {
             self::messageToCLI("Installing acl for package - " .$package->getPrettyName());
             require $this->basePath.$projectPath.'/acl/acl_install.php';
         }
@@ -128,7 +134,7 @@ class Installer extends ExtenderInstaller
 
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
 
-        $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
+        $projectPath = strpos($this->getInstallPath($target), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
 
         //spacial actions per package type
         switch ($target->getType())
@@ -150,7 +156,7 @@ class Installer extends ExtenderInstaller
         }
 
         // acl environment
-        if ($this->isZero || $this->isDevEnv) {
+        if ($this->isZero || $this->clinikalEnv === 'dev') {
             self::messageToCLI('Upgrading acl for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
             $ACL_UPGRADE = require $this->basePath.$projectPath.'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
@@ -187,13 +193,12 @@ class Installer extends ExtenderInstaller
         $this->isZero = false;
         foreach ($results as $result)
             switch ($result['gl_name']) {
-                case 'clinikal_env':
-                    $this->isDevEnv = ($result['gl_value'] && $result['gl_value'] == 'development') ? true : false;
-                    break;
                 case 'zero_installation_type':
                     $this->isZero = ($result['gl_value'] && !empty($result['gl_value'])) ? true : false;
                     break;
             }
+
+        $this->clinikalEnv = $this->composer->getConfig()->get('clinikal-env');
 
     }
 
