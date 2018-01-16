@@ -55,7 +55,7 @@ class Installer extends ExtenderInstaller
         $this->setEnvSettings();
 
         // acl environment
-        if ($this->isZero || $this->isDevEnv) {
+        if ($this->isZero || $this->clinikalEnv === 'dev') {
             //for connection with ssl
             $GLOBALS['debug_ssl_mysql_connection'] = false;
             require $this->basePath . 'library/acl.inc';
@@ -97,6 +97,12 @@ class Installer extends ExtenderInstaller
         if ( $this->clinikalEnv != 'prod') {
             $this->appendToGitignore($projectPath);
         } else {
+
+            if (is_dir($this->basePath.$projectPath ."/.git")){
+                self::messageToCLI("Removing .git from packages");
+                rmdir( $this->basePath.$projectPath ."/.git");
+            }
+            // remove .git from production version
             // put .git in the ignore
             $this->appendToGitignore($projectPath.'/.git');
             //adding all the package to special repository for production installation.
