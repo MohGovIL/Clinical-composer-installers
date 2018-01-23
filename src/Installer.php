@@ -100,13 +100,13 @@ class Installer extends ExtenderInstaller
 
             if (is_dir($this->basePath.$projectPath ."/.git")){
                 self::messageToCLI("Removing .git from packages");
-                rmdir( $this->basePath.$projectPath ."/.git");
+               // $this->deleteDotGitFolder( $this->basePath.$projectPath ."/.git");
             }
             // remove .git from production version
             // put .git in the ignore
             $this->appendToGitignore($projectPath.'/.git');
             //adding all the package to special repository for production installation.
-            shell_exec("git add $projectPath");
+            //shell_exec("git add $projectPath");
         }
 
         //run sql queries for installation
@@ -244,6 +244,26 @@ class Installer extends ExtenderInstaller
     private function getPrefix($packageType)
     {
         return explode('-',$packageType)[0];
+    }
+
+
+
+    /*
+     * php delete function that deals with directories recursively
+     */
+    private function deleteDotGitFolder($target) {
+        if(is_dir($target)){
+            $files = glob( $target . '*', GLOB_MARK ); //GLOB_MARK adds a slash to directories returned
+
+            foreach( $files as $file )
+            {
+                $this->deleteDotGitFolder( $file );
+            }
+
+            rmdir( $target );
+        } elseif(is_file($target)) {
+            unlink( $target );
+        }
     }
 
     /**
