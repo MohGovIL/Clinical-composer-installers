@@ -14,6 +14,7 @@ use OomphInc\ComposerInstallersExtender\Installer as ExtenderInstaller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
+use Clinikal\ComposerInstallersClinikalExtender\VerticalAddons;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 
 /**
@@ -27,6 +28,7 @@ class Installer extends ExtenderInstaller
     const VERTICAL_ADDONS = 'clinikal-vertical-addons';
     const ZF_MODULES = 'clinikal-zf-modules';
     const FORMHANDLER_FORMS = 'clinikal-formhandler-forms';
+    const VERTICAL_ADDONS_TYPE = 'clinikal-vertical-addons';
 
     const RED="\033[31m";
     const NC="\033[0m";
@@ -68,12 +70,12 @@ class Installer extends ExtenderInstaller
 
         $this->isInit = true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public function install(InstalledRepositoryInterface $repo, PackageInterface $package)
-    {   
+    {
         $this->initClinikal();
         //composer install
         LibraryInstaller::install($repo,$package);
@@ -148,6 +150,10 @@ class Installer extends ExtenderInstaller
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::copyCouchDbJson($this, $target);
                 break;
+
+            case self::VERTICAL_ADDONS_TYPE;
+                VerticalAddons::createCssLink($this,$target);
+            break;
         }
 
         #sql upgrade
