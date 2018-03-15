@@ -25,14 +25,14 @@ class FormhandlerActions
     {
         $packageName = explode('/',$package->getName())[1];
         //copy json to clinikal/install/couchDB/forms/backup_data/
-        copy($installer->basePath . $installer->getInstallPath($package).'/'. $packageName .'.json', $installer->basePath . self::FORMS_JSON_PATH . $packageName.'.json');
+        copy($installer->getInstallPath($package).'/'. $packageName .'.json', $installer->basePath . self::FORMS_JSON_PATH . $packageName.'.json');
         Installer::messageToCLI("Coping $packageName.json to clinikal/install/couchDB/forms/backup_data");
     }
 
     static function installTable(Installer $installer,$packagePath)
     {
         Installer::messageToCLI("Installing new sql table");
-        upgradeFromSqlFile($installer->basePath.$packagePath.'/table.sql');
+        upgradeFromSqlFile($packagePath.'/table.sql');
 
     }
 

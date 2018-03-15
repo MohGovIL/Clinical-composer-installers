@@ -95,17 +95,20 @@ class Installer extends ComposerInstaller
                 break;
             case self::VERTICAL_ADDONS_TYPE;
                 VerticalAddonsActions::createCssLink($this,$package);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 break;
 
         }
 
-        $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
+       // $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
+        $projectPath = $this->getInstallPath($package);
 
         if ( $this->clinikalEnv != 'prod') {
-            $this->appendToGitignore($projectPath);
+            $this->appendToGitignore($this->getRelativePath($package));
         } else {
 
-            if (is_dir($this->basePath.$projectPath ."/.git")){
+            if (is_dir($projectPath ."/.git")){
                 self::messageToCLI("Removing .git from packages");
                // $this->deleteDotGitFolder( $this->basePath.$projectPath ."/.git");
             }
@@ -118,12 +121,12 @@ class Installer extends ComposerInstaller
 
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
-        upgradeFromSqlFile($this->basePath.$projectPath.'/sql/install.sql');
+        upgradeFromSqlFile($projectPath.'/sql/install.sql');
 
         // acl environment
         if ($this->isZero || $this->clinikalEnv == 'dev') {
             self::messageToCLI("Installing acl for package - " .$package->getPrettyName());
-            require $this->basePath.$projectPath.'/acl/acl_install.php';
+            require $projectPath.'/acl/acl_install.php';
         }
 
         self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
@@ -138,16 +141,18 @@ class Installer extends ComposerInstaller
 
         $this->initClinikal();
 
-        //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
-        $lastTag = $initial->isDev() ? $this->getLastTag($this->basePath.$this->getInstallPath($initial)) : $initial->getPrettyVersion();
-        $lastTag = substr($lastTag,1,strlen($lastTag));
 
         // composer update
         LibraryInstaller::update($repo,$initial, $target);
 
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
 
-        $projectPath = strpos($this->getInstallPath($target), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
+        //$projectPath = strpos($this->getInstallPath($target), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
+        $projectPath = $this->getInstallPath($target);
+
+        //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
+        $lastTag = $initial->isDev() ? $this->getLastTag($projectPath) : $initial->getPrettyVersion();
+        $lastTag = substr($lastTag,1,strlen($lastTag));
 
         //spacial actions per package type
         switch ($target->getType())
@@ -155,15 +160,11 @@ class Installer extends ComposerInstaller
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::copyCouchDbJson($this, $target);
                 break;
-
-            case self::VERTICAL_ADDONS_TYPE;
-                VerticalAddonsActions::createCssLink($this,$target);
-            break;
         }
 
         #sql upgrade
         self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
-        $sqlFolder = $this->basePath.$projectPath.'/sql';
+        $sqlFolder = $projectPath.'/sql';
         $filesList = $this->getUpgradeFilesList($sqlFolder);
 
         foreach ($filesList as $version => $filename) {
@@ -175,7 +176,7 @@ class Installer extends ComposerInstaller
         // acl environment
         if ($this->isZero || $this->clinikalEnv === 'dev') {
             self::messageToCLI('Upgrading acl for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
-            $ACL_UPGRADE = require $this->basePath.$projectPath.'/acl/acl_upgrade.php';
+            $ACL_UPGRADE = require $projectPath.'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
                 if (strcmp($version, $lastTag) < 0) continue;
                     $function();
@@ -286,6 +287,12 @@ class Installer extends ComposerInstaller
     }
 
 
+    public function getRelativePath(PackageInterface $package)
+    {
+        $path = $this->getInstallPath($package);
+        return str_replace($this->basePath,'', $path);
+    }
+
 
     /* functions from oomphinc extender - https://github.com/oomphinc/composer-installers-extender */
 
@@ -293,7 +300,7 @@ class Installer extends ComposerInstaller
         $installer = new InstallerHelper( $package, $this->composer, $this->io );
         $path = $installer->getInstallPath( $package, $package->getType() );
         // if the path is false, use the default installer path instead
-        return $path !== false ? $path : LibraryInstaller::getInstallPath( $package );
+        return $path !== false ? $this->basePath.$path : LibraryInstaller::getInstallPath( $package );
     }
 
     public function supports( $packageType ) {
