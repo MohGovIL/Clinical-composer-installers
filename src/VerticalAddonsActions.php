@@ -11,7 +11,7 @@ namespace Clinikal\ComposerInstallersClinikalExtender;
 use Composer\Package\PackageInterface;
 use Clinikal\ComposerInstallersClinikalExtender\Installer;
 
-class VerticalAddons
+class VerticalAddonsActions
 {
 
     const OPENEMR_CSS_PATH = 'interface/themes/';
@@ -28,7 +28,7 @@ class VerticalAddons
     {
 
         symlink($installer->basePath .$installer->getInstallPath($package).'/'. VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
-
+        Installer::messageToCLI("Create link to css file of the vertical");
     }
 
 

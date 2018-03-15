@@ -13,7 +13,7 @@ use Composer\Installers\Installer as ComposerInstaller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
-use Clinikal\ComposerInstallersClinikalExtender\VerticalAddons;
+use Clinikal\ComposerInstallersClinikalExtender\VerticalAddonsActions;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 
 /**
@@ -41,27 +41,6 @@ class Installer extends ComposerInstaller
 
     protected $packageTypes;
 
-    public function getInstallPath( PackageInterface $package ) {
-        $installer = new InstallerHelper( $package, $this->composer, $this->io );
-        $path = $installer->getInstallPath( $package, $package->getType() );
-        // if the path is false, use the default installer path instead
-        return $path !== false ? $path : LibraryInstaller::getInstallPath( $package );
-    }
-
-    public function supports( $packageType ) {
-        // grab the package types once
-        if ( !isset( $this->packageTypes ) ) {
-            $this->packageTypes = false;
-            if ( $this->composer->getPackage() ) {
-                // get data from the 'extra' field
-                $extra = $this->composer->getPackage()->getExtra();
-                if ( !empty( $extra['installer-types'] ) ) {
-                    $this->packageTypes = (array) $extra['installer-types'];
-                }
-            }
-        }
-        return is_array( $this->packageTypes ) && in_array( $packageType, $this->packageTypes );
-    }
 
     /**
      * init private properties and objects for clinikal project
@@ -113,6 +92,10 @@ class Installer extends ComposerInstaller
                 break;
             case self::ZF_MODULES:
                 Zf2ModulesActions::addToApplicationConf($this,$package->getPrettyName());
+                break;
+            case self::VERTICAL_ADDONS_TYPE;
+                VerticalAddonsActions::createCssLink($this,$package);
+                break;
 
         }
 
@@ -174,7 +157,7 @@ class Installer extends ComposerInstaller
                 break;
 
             case self::VERTICAL_ADDONS_TYPE;
-                VerticalAddons::createCssLink($this,$target);
+                VerticalAddonsActions::createCssLink($this,$target);
             break;
         }
 
@@ -302,5 +285,32 @@ class Installer extends ComposerInstaller
         fwrite(STDOUT,"*" .self::CYAN . $message . self::NC . PHP_EOL);
     }
 
+
+
+    /* functions from oomphinc extender - https://github.com/oomphinc/composer-installers-extender */
+
+    public function getInstallPath( PackageInterface $package ) {
+        $installer = new InstallerHelper( $package, $this->composer, $this->io );
+        $path = $installer->getInstallPath( $package, $package->getType() );
+        // if the path is false, use the default installer path instead
+        return $path !== false ? $path : LibraryInstaller::getInstallPath( $package );
+    }
+
+    public function supports( $packageType ) {
+        // grab the package types once
+        if ( !isset( $this->packageTypes ) ) {
+            $this->packageTypes = false;
+            if ( $this->composer->getPackage() ) {
+                // get data from the 'extra' field
+                $extra = $this->composer->getPackage()->getExtra();
+                if ( !empty( $extra['installer-types'] ) ) {
+                    $this->packageTypes = (array) $extra['installer-types'];
+                }
+            }
+        }
+        return is_array( $this->packageTypes ) && in_array( $packageType, $this->packageTypes );
+    }
+
+    /* end oomphinc extender */
 
 }
