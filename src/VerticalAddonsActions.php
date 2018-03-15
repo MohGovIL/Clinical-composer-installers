@@ -27,8 +27,8 @@ class VerticalAddonsActions
     static function createCssLink(Installer $installer, PackageInterface $package)
     {
 
-        symlink($installer->getInstallPath($package).'/'. self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
-        symlink($installer->getInstallPath($package).'/'.'rtl_'. self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.'rtl_'.self::OPENEMR_CSS_FILENAME);
+        symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
+        symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.'rtl_'.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.'rtl_'.self::OPENEMR_CSS_FILENAME);
         Installer::messageToCLI("Create link to css file of the vertical");
     }
 
