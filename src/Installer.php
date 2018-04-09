@@ -98,9 +98,12 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::installUpdateModules($this,$package);
                 # install forms
                 VerticalAddonsActions::installUpdateForms($this,$package);
+                # link to css file
                 VerticalAddonsActions::createCssLink($this,$package);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+                # link to json of vertical menu
+                VerticalAddonsActions::createMenuLink($this,$package);
                 break;
 
         }
@@ -169,6 +172,8 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::installUpdateModules($this,$target);
                 # install forms
                 VerticalAddonsActions::installUpdateForms($this,$target);
+                # link to json of vertical menu
+                VerticalAddonsActions::createMenuLink($this,$target);
                 break;
         }
 

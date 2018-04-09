@@ -21,8 +21,13 @@ class VerticalAddonsActions
     const CSS_ORIGIN_NAME='style_clinikal.css';
     const VERTICAL_CSS_FOLDER_PATH='css/';
 
+    const OPENEMR_MENUS_PATH = 'sites/default/documents/custom_menus';
+    const VERTICAL_MENUS_FOLDER_PATH='menus/';
+
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
+
+
 
     /**
      *
@@ -31,7 +36,6 @@ class VerticalAddonsActions
      */
     static function createCssLink(Installer $installer, PackageInterface $package)
     {
-
         symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
         symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.'rtl_'.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.'rtl_'.self::OPENEMR_CSS_FILENAME);
         Installer::messageToCLI("Create link to css file of the vertical");
@@ -60,7 +64,7 @@ class VerticalAddonsActions
      * @param PackageInterface $package
      */
     static function installUpdateForms(Installer $installer, PackageInterface $package)
-{
+    {
         $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
         foreach($forms as $form) {
             if ($form === '.' || $form === '..')continue;
@@ -69,6 +73,23 @@ class VerticalAddonsActions
         }
 
     }
+
+
+    /**
+     *
+     * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
+     * @param PackageInterface $package
+     */
+    static function createMenuLink(Installer $installer, PackageInterface $package)
+    {
+        foreach (glob(self::VERTICAL_MENUS_FOLDER_PATH.'*.json') as $menu ) {
+            if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menu)) {
+                symlink($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menu);
+            }
+        }
+        Installer::messageToCLI("Create link to JSON of menu");
+    }
+
 
 
 
