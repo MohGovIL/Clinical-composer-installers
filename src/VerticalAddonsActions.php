@@ -51,7 +51,7 @@ class VerticalAddonsActions
     {
         $modules = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH);
         foreach($modules as $module) {
-            if (!is_dir($module) || $module === '.' || $module === '..')continue;
+            if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH . $module) || $module === '.' || $module === '..')continue;
             Zf2ModulesActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module, $module);
         }
 
@@ -67,7 +67,7 @@ class VerticalAddonsActions
     {
         $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
         foreach($forms as $form) {
-            if (!is_dir($form) || $form === '.' || $form === '..')continue;
+            if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
             FormhandlerActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
             FormhandlerActions::copyCouchDbJson($installer, $form);
         }
@@ -83,6 +83,7 @@ class VerticalAddonsActions
     static function createMenuLink(Installer $installer, PackageInterface $package)
     {
         foreach (glob(self::VERTICAL_MENUS_FOLDER_PATH.'*.json') as $menu ) {
+
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menu)) {
                 symlink($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menu);
             }
