@@ -15,6 +15,25 @@ class FormhandlerActions
 {
 
     const FORMS_JSON_PATH = 'clinikal/install/couchDB/forms/backup_data/';
+    const OPENEMR_FORMS_PATH = 'interface/forms/';
+
+
+    /**
+     *
+     * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
+     * @param PackageInterface $package
+     */
+    static function createLink(Installer $installer, $target, $formName)
+    {
+
+        if (!is_link($installer->basePath.self::OPENEMR_FORMS_PATH.$formName)) {
+
+            symlink($target,$installer->basePath.self::OPENEMR_FORMS_PATH.$formName);
+            Installer::messageToCLI("Create link to form - $formName");
+        }
+
+    }
+
 
     /**
      * copy form json to backup data folder - the upgrade script sends a json to couchdDB from there.

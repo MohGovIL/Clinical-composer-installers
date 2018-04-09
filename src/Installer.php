@@ -24,10 +24,9 @@ use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 class Installer extends ComposerInstaller
 {
     /* custom packages's types */
-    const VERTICAL_ADDONS = 'clinikal-vertical-addons';
+    const VERTICAL_PACKAGE = 'clinikal-vertical';
     const ZF_MODULES = 'clinikal-zf-modules';
     const FORMHANDLER_FORMS = 'clinikal-formhandler-forms';
-    const VERTICAL_ADDONS_TYPE = 'clinikal-vertical-addons';
 
     const RED="\033[31m";
     const NC="\033[0m";
@@ -87,16 +86,23 @@ class Installer extends ComposerInstaller
         switch ($package->getType())
         {
             case self::FORMHANDLER_FORMS:
+                FormhandlerActions::createLink($this->getInstallPath($package), explode('/',$package->getName())[1]);
                 FormhandlerActions::copyCouchDbJson($this, $package);
                 FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
             case self::ZF_MODULES:
-                Zf2ModulesActions::addToApplicationConf($this,$package->getPrettyName());
+                Zf2ModulesActions::createLink($this->getInstallPath($package), explode('/',$package->getName())[1]);
                 break;
-            case self::VERTICAL_ADDONS_TYPE;
+            case self::VERTICAL_PACKAGE;
+                # install zf2 modules
+                VerticalAddonsActions::installUpdateModules($this,$package);
+                # install forms
+                VerticalAddonsActions::installUpdateForms($this,$package);
                 VerticalAddonsActions::createCssLink($this,$package);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+
+
                 break;
 
         }
@@ -160,6 +166,11 @@ class Installer extends ComposerInstaller
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::copyCouchDbJson($this, $target);
                 break;
+            case self::VERTICAL_PACKAGE;
+                # install zf2 modules
+                VerticalAddonsActions::installUpdateModules($this,$target);
+                # install forms
+                VerticalAddonsActions::installUpdateForms($this,$target);
         }
 
         #sql upgrade
