@@ -30,6 +30,8 @@ class FormhandlerActions
 
             symlink($target,$installer->basePath.self::OPENEMR_FORMS_PATH.$formName);
             Installer::messageToCLI("Create link to form - $formName");
+
+            $installer->appendToGitignore($installer->basePath.self::OPENEMR_FORMS_PATH.$formName);
         }
 
     }
@@ -40,13 +42,13 @@ class FormhandlerActions
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
      */
-    static function copyCouchDbJson(Installer $installer, PackageInterface $package)
+    static function copyCouchDbJson(Installer $installer, $packageName)
     {
-        $packageName = explode('/',$package->getName())[1];
         //copy json to clinikal/install/couchDB/forms/backup_data/
-        copy($installer->getInstallPath($package).'/'. $packageName .'.json', $installer->basePath . self::FORMS_JSON_PATH . $packageName.'.json');
+        copy($installer->basePath . self::OPENEMR_FORMS_PATH .'/'. $packageName . '/' . $packageName .'.json', $installer->basePath . self::FORMS_JSON_PATH . $packageName.'.json');
         Installer::messageToCLI("Coping $packageName.json to clinikal/install/couchDB/forms/backup_data");
     }
+
 
     static function installTable(Installer $installer,$packagePath)
     {

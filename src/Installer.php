@@ -86,12 +86,12 @@ class Installer extends ComposerInstaller
         switch ($package->getType())
         {
             case self::FORMHANDLER_FORMS:
-                FormhandlerActions::createLink($this->getInstallPath($package), explode('/',$package->getName())[1]);
-                FormhandlerActions::copyCouchDbJson($this, $package);
+                FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
+                FormhandlerActions::copyCouchDbJson($this, explode('/',$package->getName())[1]);
                 FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
             case self::ZF_MODULES:
-                Zf2ModulesActions::createLink($this->getInstallPath($package), explode('/',$package->getName())[1]);
+                Zf2ModulesActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 break;
             case self::VERTICAL_PACKAGE;
                 # install zf2 modules
@@ -101,8 +101,6 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCssLink($this,$package);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
-
-
                 break;
 
         }
@@ -159,7 +157,7 @@ class Installer extends ComposerInstaller
         //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
         $lastTag = $initial->isDev() ? $this->getLastTag($projectPath) : $initial->getPrettyVersion();
         $lastTag = substr($lastTag,1,strlen($lastTag));
-
+        echo $target->getType();
         //spacial actions per package type
         switch ($target->getType())
         {
@@ -171,6 +169,7 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::installUpdateModules($this,$target);
                 # install forms
                 VerticalAddonsActions::installUpdateForms($this,$target);
+                break;
         }
 
         #sql upgrade
@@ -202,7 +201,7 @@ class Installer extends ComposerInstaller
      * add a package to .gitignore .
      * @param $ignoreFile
      */
-    private function appendToGitignore($ignoreFile)
+    public function appendToGitignore($ignoreFile)
     {
         file_put_contents($this->basePath.'.gitignore', PHP_EOL . $ignoreFile, FILE_APPEND);
         self::messageToCLI('Adding to .gitignore - ' . $ignoreFile);

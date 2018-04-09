@@ -47,6 +47,7 @@ class VerticalAddonsActions
     {
         $modules = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH);
         foreach($modules as $module) {
+            if (!is_dir($module) || $module === '.' || $module === '..')continue;
             Zf2ModulesActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module, $module);
         }
 
@@ -59,11 +60,12 @@ class VerticalAddonsActions
      * @param PackageInterface $package
      */
     static function installUpdateForms(Installer $installer, PackageInterface $package)
-    {
+{
         $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
         foreach($forms as $form) {
+            if ($form === '.' || $form === '..')continue;
             FormhandlerActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
-            FormhandlerActions::copyCouchDbJson($installer, )
+            FormhandlerActions::copyCouchDbJson($installer, $form);
         }
 
     }
