@@ -30,7 +30,7 @@ class VerticalAddonsActions
 
 
     /**
-     *
+     * Create link from theme's folder in the project to the new style of the vertical
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
      */
@@ -43,7 +43,7 @@ class VerticalAddonsActions
 
 
     /**
-     *
+     * Create link from zend modules's folder in the project for every vertical's module.
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
      */
@@ -59,7 +59,7 @@ class VerticalAddonsActions
 
 
     /**
-     *
+     * Create link from forms's folder in the project for every vertical's form.
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
      */
@@ -76,7 +76,7 @@ class VerticalAddonsActions
 
 
     /**
-     *
+     * create link from menus's folder in the project to every vertical menu
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
      */
@@ -94,10 +94,5 @@ class VerticalAddonsActions
         }
 
     }
-
-
-
-
-
 
 }
