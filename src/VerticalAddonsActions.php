@@ -82,13 +82,16 @@ class VerticalAddonsActions
      */
     static function createMenuLink(Installer $installer, PackageInterface $package)
     {
-        foreach (glob(self::VERTICAL_MENUS_FOLDER_PATH.'*.json') as $menu ) {
+        $menus = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.'*.json');
+        print_r($menus);
+        foreach ($menus as $menu ) {
 
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menu)) {
                 symlink($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menu);
+                Installer::messageToCLI("Create link to $menu JSON of menu");
             }
         }
-        Installer::messageToCLI("Create link to JSON of menu");
+
     }
 
 
