@@ -88,6 +88,7 @@ class VerticalAddonsActions
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menuName)) {
                 echo $menu;
                 symlink($menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
+                $installer->appendToGitignore(self::OPENEMR_MENUS_PATH.$menuName);
                 Installer::messageToCLI("Create link to $menuName from menus folder");
             }
         }

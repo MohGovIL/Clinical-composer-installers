@@ -31,7 +31,7 @@ class FormhandlerActions
             symlink($target,$installer->basePath.self::OPENEMR_FORMS_PATH.$formName);
             Installer::messageToCLI("Create link to form - $formName");
 
-            $installer->appendToGitignore($installer->basePath.self::OPENEMR_FORMS_PATH.$formName);
+            $installer->appendToGitignore(self::OPENEMR_FORMS_PATH.$formName);
         }
 
     }
