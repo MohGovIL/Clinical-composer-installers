@@ -25,9 +25,8 @@ class Zf2ModulesActions
      */
     static function createLink(Installer $installer, $target , $moduleName)
     {
-        echo $installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName;
         if (!is_link($installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName)) {
-            echo 3;
+
             symlink($target ,$installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName);
             Installer::messageToCLI("Create link to module - $moduleName");
             self::addToApplicationConf($installer,$moduleName);

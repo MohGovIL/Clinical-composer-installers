@@ -21,7 +21,7 @@ class VerticalAddonsActions
     const CSS_ORIGIN_NAME='style_clinikal.css';
     const VERTICAL_CSS_FOLDER_PATH='css/';
 
-    const OPENEMR_MENUS_PATH = 'sites/default/documents/custom_menus';
+    const OPENEMR_MENUS_PATH = 'sites/default/documents/custom_menus/';
     const VERTICAL_MENUS_FOLDER_PATH='menus/';
 
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
@@ -83,12 +83,12 @@ class VerticalAddonsActions
     static function createMenuLink(Installer $installer, PackageInterface $package)
     {
         $menus = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.'*.json');
-        print_r($menus);
         foreach ($menus as $menu ) {
-
-            if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menu)) {
-                symlink($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menu);
-                Installer::messageToCLI("Create link to $menu JSON of menu");
+            $menuName = pathinfo($menu, PATHINFO_BASENAME);
+            if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menuName)) {
+                echo $menu;
+                symlink($menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
+                Installer::messageToCLI("Create link to $menuName from menus folder");
             }
         }
 
