@@ -132,7 +132,7 @@ class Installer extends ComposerInstaller
         //run sql from command line because this sql contains variables are working only in single file
         $installReport = shell_exec("mysql -u{$sqlconf['login']} -p{$sqlconf['pass']} -h{$sqlconf['host']} -P{$sqlconf['port']} {$sqlconf['dbase']} < {$projectPath}/sql/install.sql");
         fwrite(STDOUT, $installReport . PHP_EOL);
-        if (strpos($installReport, 'ERROR') >= 0) {
+        if (strpos($installReport, 'ERROR') !== false) {
            echo 'failed!';
         }
 
