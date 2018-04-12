@@ -123,15 +123,18 @@ class Installer extends ComposerInstaller
             // put .git in the ignore
             $this->appendToGitignore($projectPath.'/.git');
             //adding all the package to special repository for production installation.
-            //shell_exec("git add $projectPath");
+            //shell_exec("git add $projectPath");l
         }
 
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         require $this->basePath . '/sites/default/sqlconf.php';
+        //run sql from command line because this sql contains variables are working only in single file
         $installReport = shell_exec("mysql -u{$sqlconf['login']} -p{$sqlconf['pass']} -h{$sqlconf['host']} -P{$sqlconf['port']} {$sqlconf['dbase']} < {$projectPath}/sql/install.sql");
         fwrite(STDOUT, $installReport . PHP_EOL);
-        if (strpos($installReport, 'ERROR') >= 0) exit(1);
+        if (strpos($installReport, 'ERROR') >= 0) {
+           echo 'failed!';
+        }
 
 
         // acl environment
