@@ -128,7 +128,11 @@ class Installer extends ComposerInstaller
 
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
-        upgradeFromSqlFile($projectPath.'/sql/install.sql');
+        require $this->basePath . '/sites/default/sqlconf.php';
+        $installReport = shell_exec("mysql -u{$sqlconf['login']} -p{$sqlconf['pass']} -h{$sqlconf['host']} -P{$sqlconf['port']} < {$projectPath}/sql/install.sql");
+        fwrite(STDOUT, $installReport . PHP_EOL);
+        if (strpos($installReport, 'ERROR') >= 0) exit(1);
+
 
         // acl environment
         if ($this->isZero || $this->clinikalEnv == 'dev') {
@@ -147,7 +151,6 @@ class Installer extends ComposerInstaller
     {
 
         $this->initClinikal();
-
 
         // composer update
         LibraryInstaller::update($repo,$initial, $target);
