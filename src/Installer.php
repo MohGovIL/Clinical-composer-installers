@@ -113,6 +113,8 @@ class Installer extends ComposerInstaller
 
         if ( $this->clinikalEnv != 'prod') {
             $this->appendToGitignore($this->getRelativePath($package));
+            // change branch to track remote composer branch
+            shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
         } else {
 
             if (is_dir($projectPath ."/.git")){
@@ -203,6 +205,9 @@ class Installer extends ComposerInstaller
                     $function();
             }
         }
+        
+        // change branch to track remote composer branch
+        shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
 
         self::messageToCLI('----- UPDATE ' . strtoupper($target->getName()) . ' WAS FINISHED ------' . PHP_EOL);
 
