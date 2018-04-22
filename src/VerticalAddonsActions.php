@@ -85,6 +85,11 @@ class VerticalAddonsActions
         $menus = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.'*.json');
         foreach ($menus as $menu ) {
             $menuName = pathinfo($menu, PATHINFO_BASENAME);
+            /* change for patient file menus */
+            if (strpos($menuName,'patient_') === 0) {
+               $splitMenuName = explode('_', $menuName);
+               $menuName = 'patient_menus/' . $splitMenuName[1];
+            }
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menuName)) {
                 echo $menu;
                 symlink($menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
