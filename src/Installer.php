@@ -145,6 +145,20 @@ class Installer extends ComposerInstaller
             require $projectPath.'/acl/acl_install.php';
         }
 
+
+        //create links for git hooks
+        if ($this->clinikalEnv == 'dev') {
+            $targetDir = $this->clinikalPath . "ci/git-hooks/";
+            $linkDir = $projectPath . "/.git/hooks/";
+            $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
+
+            //links for more "permissive" hooks fit for old repos
+            $this->createHookLink($targetDir, $linkDir);
+
+            //links for hooks fit for new repos (hook might overwrite a more "permissive" hook)
+            $this->createHookLink($newReposTargetDir, $linkDir, true);
+        }
+
         self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
     }
 
@@ -205,7 +219,21 @@ class Installer extends ComposerInstaller
                     $function();
             }
         }
-        
+
+        //create links for git hooks
+        if ($this->clinikalEnv == 'dev') {
+            $targetDir = $this->clinikalPath . "ci/git-hooks/";
+            $linkDir = $projectPath . "/.git/hooks/";
+            $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
+
+            //links for more "permissive" hooks fit for old repos
+            $this->createHookLink($targetDir, $linkDir);
+
+            //links for hooks fit for new repos (hook might overwrite a more "permissive" hook)
+            //(note that they might already exist and therefore overwrite themselves but this is ok)
+            $this->createHookLink($newReposTargetDir, $linkDir, true);
+        }
+
         // change branch to track remote composer branch
         shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
 
@@ -342,6 +370,30 @@ class Installer extends ComposerInstaller
             }
         }
         return is_array( $this->packageTypes ) && in_array( $packageType, $this->packageTypes );
+    }
+
+
+    private function createHookLink($hooksSourceDir, $hooksTargetPath, $overWrite=false) {
+        $dirContents = scandir($hooksSourceDir);//get files
+        foreach ($dirContents as $file) {
+            $target = $hooksSourceDir . $file;
+            $link = $hooksTargetPath . $file;
+            if(is_file($target)) {//make sure not directory
+                $linkExists = is_link($link);//check if there is already a link
+                if($linkExists ) {
+                    if($overWrite){
+                        //overwrite link
+                        unlink($link);
+                        Installer::messageToCLI("Removed old link to git hook - $file");
+                    }
+                    else {
+                        continue; //link exists and we do not want to overwrite it
+                    }
+                }
+                symlink($target,$link);
+                Installer::messageToCLI("Created link to git hook - $file");
+            }
+        }
     }
 
     /* end oomphinc extender */
