@@ -149,8 +149,12 @@ class Installer extends ComposerInstaller
         //create links for git hooks
         if ($this->clinikalEnv == 'dev') {
             $targetDir = $this->clinikalPath . "ci/git-hooks/";
-            $linkDir = $projectPath . "/.git/hooks/";
             $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
+            $configFile = $this->clinikalPath . "config/";
+            $linkDir = $projectPath . "/.git/hooks/";
+
+            //create link to config in hooks dir
+            symlink($configFile . "clinikal.cfg", $linkDir . "clinikal.cfg");
 
             //links for more "permissive" hooks fit for old repos
             $this->createHookLink($targetDir, $linkDir);
@@ -223,8 +227,14 @@ class Installer extends ComposerInstaller
         //create links for git hooks
         if ($this->clinikalEnv == 'dev') {
             $targetDir = $this->clinikalPath . "ci/git-hooks/";
-            $linkDir = $projectPath . "/.git/hooks/";
             $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
+            $configFile = $this->clinikalPath . "config/";
+            $linkDir = $projectPath . "/.git/hooks/";
+
+            //create link to config in hooks dir (if does not already exist)
+            if(!is_link($linkDir . "clinikal.cfg")) {
+                symlink($configFile . "clinikal.cfg", $linkDir . "clinikal.cfg");
+            }
 
             //links for more "permissive" hooks fit for old repos
             $this->createHookLink($targetDir, $linkDir);
@@ -379,8 +389,7 @@ class Installer extends ComposerInstaller
             $target = $hooksSourceDir . $file;
             $link = $hooksTargetPath . $file;
             if(is_file($target)) {//make sure not directory
-                $linkExists = is_link($link);//check if there is already a link
-                if($linkExists ) {
+                if(is_link($link) ) {//check if there is already a link
                     if($overWrite){
                         //overwrite link
                         unlink($link);
