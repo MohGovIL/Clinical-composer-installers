@@ -172,7 +172,7 @@ class Installer extends ComposerInstaller
      */
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
-
+error_log("a");
         $this->initClinikal();
 
         // composer update
@@ -223,17 +223,17 @@ class Installer extends ComposerInstaller
                     $function();
             }
         }
-
+error_log("d");
         //create links for git hooks
         if ($this->clinikalEnv == 'dev') {
             $targetDir = $this->clinikalPath . "ci/git-hooks/";
             $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
             $configFile = $this->clinikalPath . "config/";
             $linkDir = $projectPath . "/.git/hooks/";
-            echo($linkDir . "clinikal.cfg");
+            error_log($linkDir . "clinikal.cfg");
             //create link to config in hooks dir (if does not already exist)
             if(!is_link($linkDir . "clinikal.cfg")) {
-                echo($configFile . "clinikal.cfg");
+                error_log($configFile . "clinikal.cfg");
                 symlink($configFile . "clinikal.cfg", $linkDir . "clinikal.cfg");
             }
 
