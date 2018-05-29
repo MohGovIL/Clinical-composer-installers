@@ -230,9 +230,10 @@ class Installer extends ComposerInstaller
             $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
             $configFile = $this->clinikalPath . "config/";
             $linkDir = $projectPath . "/.git/hooks/";
-
+            echo($linkDir . "clinikal.cfg");
             //create link to config in hooks dir (if does not already exist)
             if(!is_link($linkDir . "clinikal.cfg")) {
+                echo($configFile . "clinikal.cfg");
                 symlink($configFile . "clinikal.cfg", $linkDir . "clinikal.cfg");
             }
 
