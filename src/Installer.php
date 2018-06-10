@@ -130,14 +130,7 @@ class Installer extends ComposerInstaller
 
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
-        require $this->basePath . '/sites/default/sqlconf.php';
-        //run sql from command line because this sql contains variables are working only in single file
-        $installReport = shell_exec("mysql -u{$sqlconf['login']} -p{$sqlconf['pass']} -h{$sqlconf['host']} -P{$sqlconf['port']} {$sqlconf['dbase']} < {$projectPath}/sql/install.sql");
-        fwrite(STDOUT, $installReport . PHP_EOL);
-        if (strpos($installReport, 'ERROR') !== false) {
-           echo 'failed!';
-        }
-
+        upgradeFromSqlFile($projectPath.'/sql/install.sql', true);
 
         // acl environment
         if ($this->isZero || $this->clinikalEnv == 'dev') {
@@ -193,7 +186,7 @@ class Installer extends ComposerInstaller
         foreach ($filesList as $version => $filename) {
             //   print_r($form_old_version);
             if (strcmp($version, $lastTag) < 0) continue;
-            upgradeFromSqlFile($sqlFolder .'/'.$filename);
+            upgradeFromSqlFile($sqlFolder .'/'.$filename, true);
         }
 
         // acl environment
