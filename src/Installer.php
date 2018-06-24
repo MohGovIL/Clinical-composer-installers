@@ -87,7 +87,7 @@ class Installer extends ComposerInstaller
         {
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
-                FormhandlerActions::copyCouchDbJson($this, explode('/',$package->getName())[1]);
+                FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
                 FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
             case self::ZF_MODULES:
@@ -166,7 +166,7 @@ class Installer extends ComposerInstaller
         switch ($target->getType())
         {
             case self::FORMHANDLER_FORMS:
-                FormhandlerActions::copyCouchDbJson($this, $target);
+                FormhandlerActions::linkToCouchDbJson($this, $target);
                 break;
             case self::VERTICAL_PACKAGE;
                 # install zf2 modules

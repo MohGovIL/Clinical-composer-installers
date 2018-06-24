@@ -69,7 +69,7 @@ class VerticalAddonsActions
         foreach($forms as $form) {
             if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
             FormhandlerActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
-            FormhandlerActions::copyCouchDbJson($installer, $form);
+            FormhandlerActions::linkToCouchDbJson($installer, $form);
         }
 
     }
