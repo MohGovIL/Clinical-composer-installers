@@ -50,7 +50,7 @@ class FormhandlerActions
             symlink($installer->basePath . self::OPENEMR_FORMS_PATH . $packageName . '/' . $packageName .'.json', $installer->basePath . self::FORMS_JSON_PATH .$packageName . '.json');
             Installer::messageToCLI("Coping $packageName.json to clinikal/install/couchDB/forms/backup_data");
 
-            $installer->appendToGitignore(self::OPENEMR_FORMS_PATH . $packageName.'.json');
+            $installer->appendToGitignore(self::FORMS_JSON_PATH .$packageName . '.json');
         }
     }
 
