@@ -160,7 +160,9 @@ class Installer extends ComposerInstaller
 
         //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
         $lastTag = $initial->isDev() ? $this->getLastTag($projectPath) : $initial->getPrettyVersion();
-        $lastTag = substr($lastTag,1,strlen($lastTag));
+        preg_match('/\w+_(\d+)_(\d+)_(\d+)$/',  $lastTag, $matches);
+        $tagVersion = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
+        //$lastTag = substr($lastTag,1,strlen($lastTag));
         echo $target->getType();
         //spacial actions per package type
         switch ($target->getType())
@@ -185,7 +187,7 @@ class Installer extends ComposerInstaller
 
         foreach ($filesList as $version => $filename) {
             //   print_r($form_old_version);
-            if (strcmp($version, $lastTag) < 0) continue;
+            if (strcmp($version, $tagVersion) < 0) continue;
             upgradeFromSqlFile($sqlFolder .'/'.$filename, true);
         }
 
