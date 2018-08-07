@@ -131,6 +131,9 @@ class Installer extends ComposerInstaller
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         upgradeFromSqlFile($projectPath.'/sql/install.sql', true);
+        if($this->Zero) {
+            upgradeFromSqlFile($projectPath.'/sql/zero/install.sql', true);
+        }
 
         // acl environment
         if ($this->isZero || $this->clinikalEnv == 'dev') {
@@ -183,12 +186,10 @@ class Installer extends ComposerInstaller
         #sql upgrade
         self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
         $sqlFolder = $projectPath.'/sql';
-        $filesList = $this->getUpgradeFilesList($sqlFolder);
-
-        foreach ($filesList as $version => $filename) {
-            //   print_r($form_old_version);
-            if (strcmp($version, $tagVersion) < 0) continue;
-            upgradeFromSqlFile($sqlFolder .'/'.$filename, true);
+        $this->upgradeFromSqlFolder($sqlFolder, $tagVersion);
+        if($this->isZero) {
+           $zeroSqlFolder = $sqlFolder.'/zero';
+            $this->upgradeFromSqlFolder($zeroSqlFolder, $tagVersion);
         }
 
         // acl environment
@@ -261,6 +262,22 @@ class Installer extends ComposerInstaller
         ksort($versions);
 
         return $versions;
+    }
+
+    /**
+     * gets name of folder with upgrade sql files and performs upgrade based on the files within
+     * @param $filesFolder
+     * @param $tagVersion
+     */
+    private function upgradeFromSqlFolder($filesFolder, $tagVersion)
+    {
+        $filesList = $this->getUpgradeFilesList($filesFolder);
+
+        foreach ($filesList as $version => $filename) {
+            //   print_r($form_old_version);
+            if (strcmp($version, $tagVersion) < 0) continue;
+            upgradeFromSqlFile($filesFolder .'/'.$filename, true);
+        }
     }
 
     /**
