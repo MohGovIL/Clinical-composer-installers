@@ -102,6 +102,8 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCssLink($this,$package);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
                 break;

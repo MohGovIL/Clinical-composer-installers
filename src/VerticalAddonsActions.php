@@ -17,9 +17,9 @@ class VerticalAddonsActions
 {
 
     const OPENEMR_CSS_PATH = 'interface/themes/';
+    const VERTICAL_CSS_FOLDER_PATH='css/';
     const OPENEMR_CSS_FILENAME = 'style_vertical.css';
     const CSS_ORIGIN_NAME='style_clinikal.css';
-    const VERTICAL_CSS_FOLDER_PATH='css/';
     const ZERO_OPENEMR_CSS_FILENAME = 'style_zero_vertical.css';
     const ZERO_CSS_ORIGIN_NAME='style_zero_clinikal.css';
 
