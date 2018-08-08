@@ -132,7 +132,7 @@ class Installer extends ComposerInstaller
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         upgradeFromSqlFile($projectPath.'/sql/install.sql', true);
         if($this->isZero) {
-            upgradeFromSqlFile($projectPath.'/sql/zero/install.sql', true);
+            upgradeFromSqlFile($projectPath.'/sql/zero/sqlUpgradeZero.sql', true);
         }
 
         // acl environment
