@@ -131,7 +131,7 @@ class Installer extends ComposerInstaller
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
         upgradeFromSqlFile($projectPath.'/sql/install.sql', true);
-        if($this->Zero) {
+        if($this->isZero) {
             upgradeFromSqlFile($projectPath.'/sql/zero/install.sql', true);
         }
 
