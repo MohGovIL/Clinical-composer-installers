@@ -87,7 +87,7 @@ class Installer extends ComposerInstaller
         {
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
-                FormhandlerActions::copyCouchDbJson($this, explode('/',$package->getName())[1]);
+                FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
                 FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 break;
             case self::ZF_MODULES:
@@ -102,6 +102,8 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCssLink($this,$package);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
                 break;
@@ -130,14 +132,10 @@ class Installer extends ComposerInstaller
 
         //run sql queries for installation
         self::messageToCLI("Running sql queries for installation for package - " .$package->getPrettyName());
-        require $this->basePath . '/sites/default/sqlconf.php';
-        //run sql from command line because this sql contains variables are working only in single file
-        $installReport = shell_exec("mysql -u{$sqlconf['login']} -p{$sqlconf['pass']} -h{$sqlconf['host']} -P{$sqlconf['port']} {$sqlconf['dbase']} < {$projectPath}/sql/install.sql");
-        fwrite(STDOUT, $installReport . PHP_EOL);
-        if (strpos($installReport, 'ERROR') !== false) {
-           echo 'failed!';
+        upgradeFromSqlFile($projectPath.'/sql/install.sql', true);
+        if($this->isZero) {
+            upgradeFromSqlFile($projectPath.'/sql/zero/sqlUpgradeZero.sql', true);
         }
-
 
         // acl environment
         if ($this->isZero || $this->clinikalEnv == 'dev') {
@@ -185,13 +183,15 @@ class Installer extends ComposerInstaller
 
         //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
         $lastTag = $initial->isDev() ? $this->getLastTag($projectPath) : $initial->getPrettyVersion();
-        $lastTag = substr($lastTag,1,strlen($lastTag));
+        preg_match('/\w+_(\d+)_(\d+)_(\d+)$/',  $lastTag, $matches);
+        $tagVersion = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
+        //$lastTag = substr($lastTag,1,strlen($lastTag));
         echo $target->getType();
         //spacial actions per package type
         switch ($target->getType())
         {
             case self::FORMHANDLER_FORMS:
-                FormhandlerActions::copyCouchDbJson($this, $target);
+                FormhandlerActions::linkToCouchDbJson($this, $target);
                 break;
             case self::VERTICAL_PACKAGE;
                 # install zf2 modules
@@ -206,12 +206,10 @@ class Installer extends ComposerInstaller
         #sql upgrade
         self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
         $sqlFolder = $projectPath.'/sql';
-        $filesList = $this->getUpgradeFilesList($sqlFolder);
-
-        foreach ($filesList as $version => $filename) {
-            //   print_r($form_old_version);
-            if (strcmp($version, $lastTag) < 0) continue;
-            upgradeFromSqlFile($sqlFolder .'/'.$filename);
+        $this->upgradeFromSqlFolder($sqlFolder, $tagVersion);
+        if($this->isZero) {
+           $zeroSqlFolder = $sqlFolder.'/zero';
+            $this->upgradeFromSqlFolder($zeroSqlFolder, $tagVersion);
         }
 
         // acl environment
@@ -304,6 +302,22 @@ class Installer extends ComposerInstaller
         ksort($versions);
 
         return $versions;
+    }
+
+    /**
+     * gets name of folder with upgrade sql files and performs upgrade based on the files within
+     * @param $filesFolder
+     * @param $tagVersion
+     */
+    private function upgradeFromSqlFolder($filesFolder, $tagVersion)
+    {
+        $filesList = $this->getUpgradeFilesList($filesFolder);
+
+        foreach ($filesList as $version => $filename) {
+            //   print_r($form_old_version);
+            if (strcmp($version, $tagVersion) < 0) continue;
+            upgradeFromSqlFile($filesFolder .'/'.$filename, true);
+        }
     }
 
     /**
