@@ -111,7 +111,7 @@ class VerticalAddonsActions
     static function appendCronJobs(Installer $installer, PackageInterface $package)
     {
         //load exist jobs into array
-        if(!is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE)) return;
+        if(empty($installer->installName) || !is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE)) return;
         $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
         foreach ($existJobs as $key => $job)
         {   // clean comment lines
