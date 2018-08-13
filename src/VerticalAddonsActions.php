@@ -125,6 +125,11 @@ class VerticalAddonsActions
             if(strpos($job, '#') === 1)continue;
             //append job if not exist
             if (!in_array($job, $existJobs)){
+
+                if(strpos($job, '<INSTALLATION_URL>') !== false){
+                    $job = str_replace('<INSTALLATION_URL>', $installer->installName, $job);
+                }
+
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
             }
         }
