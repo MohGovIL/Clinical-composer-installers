@@ -29,6 +29,9 @@ class VerticalAddonsActions
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
 
+    const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
+    const CLINIKAL_CRONJOB_FILE='install/cron_jobs/clinikal_cron';
+
 
 
     /**
@@ -103,6 +106,28 @@ class VerticalAddonsActions
             }
         }
 
+    }
+
+    static function appendCronJobs(Installer $installer, PackageInterface $package)
+    {
+        //load exist jobs into array
+        $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
+        foreach ($existJobs as $key => $job)
+        {   // clean comment lines
+            if(strpos($job, '#') === 1)unset($existJobs[$key]);
+        }
+        $existJobs = array_values($existJobs);
+
+        //load vertical jobs into array
+        $verticalJobs = $installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE;
+        foreach ($verticalJobs as $key => $job)
+        {    // clean comment lines
+            if(strpos($job, '#') === 1)continue;
+            //append job if not exist
+            if (!in_array($job, $existJobs)){
+                file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
+            }
+        }
     }
 
 }

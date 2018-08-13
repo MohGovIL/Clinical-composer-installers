@@ -106,6 +106,8 @@ class Installer extends ComposerInstaller
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
+                #save cron jobs
+
                 break;
 
         }
@@ -200,6 +202,8 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::installUpdateForms($this,$target);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$target);
+                # append cron jobs
+                VerticalAddonsActions::appendCronJobs($this,$target);
                 break;
         }
 
@@ -279,6 +283,7 @@ class Installer extends ComposerInstaller
             }
 
         $this->clinikalEnv = $this->composer->getConfig()->get('clinikal-env');
+        $this->installName = $this->composer->getConfig()->get('install-name');
 
     }
 
