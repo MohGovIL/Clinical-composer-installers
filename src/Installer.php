@@ -106,8 +106,8 @@ class Installer extends ComposerInstaller
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
-                #save cron jobs
-
+                # append cron jobs
+                VerticalAddonsActions::appendCronJobs($this,$package);
                 break;
 
         }
