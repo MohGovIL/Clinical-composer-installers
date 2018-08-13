@@ -116,10 +116,10 @@ class VerticalAddonsActions
         {   // clean comment lines
             if(strpos($job, '#') === 1)unset($existJobs[$key]);
         }
-        $existJobs = array_values($existJobs);
+        $existJobs = !empty($existJobs) ? array_values($existJobs) : array();
 
         //load vertical jobs into array
-        $verticalJobs = $installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE;
+        $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
         foreach ($verticalJobs as $key => $job)
         {    // clean comment lines
             if(strpos($job, '#') === 1)continue;
