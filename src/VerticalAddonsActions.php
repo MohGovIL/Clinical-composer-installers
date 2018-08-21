@@ -124,7 +124,7 @@ class VerticalAddonsActions
         if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
         $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
 
-        $ubuntuUser = shell_exec('whoami');
+        $ubuntuUser = trim(shell_exec('whoami'));
 
         foreach ($verticalJobs as $key => $job)
         {    // clean comment lines
@@ -145,5 +145,4 @@ class VerticalAddonsActions
             }
         }
     }
-
 }
