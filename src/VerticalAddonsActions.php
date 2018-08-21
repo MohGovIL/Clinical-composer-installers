@@ -31,6 +31,7 @@ class VerticalAddonsActions
 
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
     const CLINIKAL_CRONJOB_FILE='install/cron_jobs/clinikal_cron';
+    const CLINIKAL_CRONJOB_LOG='install/cron_jobs/cron_jobs_log';
 
 
 
@@ -138,6 +139,8 @@ class VerticalAddonsActions
             if(strpos($job, '<UBUNTU_USER>') !== false){
                 $job = str_replace('<UBUNTU_USER>', $ubuntuUser, $job);
             }
+
+            $job = $job . ' >> ' . $installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG;
 
             if (!in_array($job, $existJobs)){
 
