@@ -117,6 +117,8 @@ class VerticalAddonsActions
 
         foreach ($existJobs as $key => $job)
         {   // clean comment lines
+            //remove \n
+            $job = trim($job);
             if(strpos($job, '#') === 0 || empty($job))unset($existJobs[$key]);
         }
         $existJobs = !empty($existJobs) ? array_values($existJobs) : array();
@@ -125,10 +127,12 @@ class VerticalAddonsActions
         if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
         $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
 
+        //remove \n
         $ubuntuUser = trim(shell_exec('whoami'));
 
         foreach ($verticalJobs as $key => $job)
         {    // clean comment lines
+            $job = trim($job);
             if(strpos($job, '#') === 0 || empty($job))continue;
             //append job if not exist
 
