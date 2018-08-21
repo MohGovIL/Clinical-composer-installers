@@ -113,24 +113,33 @@ class VerticalAddonsActions
         //load exist jobs into array
         if(empty($installer->installName) || !is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE)) return;
         $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
+
         foreach ($existJobs as $key => $job)
         {   // clean comment lines
-            if(strpos($job, '#') === 0)unset($existJobs[$key]);
+            if(strpos($job, '#') === 0 || empty($job))unset($existJobs[$key]);
         }
         $existJobs = !empty($existJobs) ? array_values($existJobs) : array();
 
         //load vertical jobs into array
         if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
         $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
+
+        $ubuntuUser = shell_exec('whoami');
+
         foreach ($verticalJobs as $key => $job)
         {    // clean comment lines
-            if(strpos($job, '#') === 0)continue;
+            if(strpos($job, '#') === 0 || empty($job))continue;
             //append job if not exist
-            if (!in_array($job, $existJobs)){
 
-                if(strpos($job, '<INSTALLATION_URL>') !== false){
-                    $job = str_replace('<INSTALLATION_URL>', $installer->installName, $job);
-                }
+            if(strpos($job, '<INSTALLATION_URL>') !== false){
+                $job = str_replace('<INSTALLATION_URL>', $installer->installName, $job);
+            }
+
+            if(strpos($job, '<UBUNTU_USER>') !== false){
+                $job = str_replace('<UBUNTU_USER>', $ubuntuUser, $job);
+            }
+
+            if (!in_array($job, $existJobs)){
 
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
             }
