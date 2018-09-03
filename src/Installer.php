@@ -309,7 +309,7 @@ class Installer extends ComposerInstaller
      */
     private function setIsCloned()
     {
-        return $this->composer->getConfig()->get('db-cloned');
+        $this->isCloned = $this->composer->getConfig()->get('db-cloned');
     }
 
     /**
