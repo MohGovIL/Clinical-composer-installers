@@ -29,6 +29,10 @@ class VerticalAddonsActions
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
 
+    const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
+    const CLINIKAL_CRONJOB_FILE='install/cron_jobs/clinikal_cron';
+    const CLINIKAL_CRONJOB_LOG='install/cron_jobs/cron_jobs_log';
+
 
 
     /**
@@ -105,4 +109,51 @@ class VerticalAddonsActions
 
     }
 
+    static function appendCronJobs(Installer $installer, PackageInterface $package)
+    {
+        //load exist jobs into array
+        if(empty($installer->installName) || !is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE)) return;
+        $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
+
+        foreach ($existJobs as $key => $job)
+        {   // clean comment lines
+            //remove \n
+            $job = trim($job);
+            if(strpos($job, '#') === 0 || empty($job))unset($existJobs[$key]);
+        }
+        $existJobs = !empty($existJobs) ? array_values($existJobs) : array();
+
+        //load vertical jobs into array
+        if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
+        $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
+
+        //remove \n
+        $ubuntuUser = trim(shell_exec('whoami'));
+
+        foreach ($verticalJobs as $key => $job)
+        {    // clean comment lines
+            $job = trim($job);
+            if(strpos($job, '#') === 0 || empty($job))continue;
+            //append job if not exist
+
+            if(strpos($job, '<INSTALLATION_URL>') !== false){
+                $job = str_replace('<INSTALLATION_URL>', $installer->installName, $job);
+            }
+
+            if(strpos($job, '<UBUNTU_USER>') !== false){
+                $job = str_replace('<UBUNTU_USER>', $ubuntuUser, $job);
+            }
+
+            if(strpos($job, '<ZF2_INDEX_PHP>') !== false){
+                $job = str_replace('<ZF2_INDEX_PHP>', $installer->basePath.'interface/modules/zend_modules/public/index.php', $job);
+            }
+
+            $job = $job . ' >> ' . $installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG;
+
+            if (!in_array($job, $existJobs)){
+
+                file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
+            }
+        }
+    }
 }
