@@ -140,7 +140,7 @@ class Installer extends ComposerInstaller
         }
 
         // acl environment
-        if ($this->isZero || $this->clinikalEnv == 'dev') {
+        if ($this->isZero || $this->clinikalEnv == 'dev' || $this->clinikalEnv == 'test') {
             self::messageToCLI("Installing acl for package - " .$package->getPrettyName());
             require $projectPath.'/acl/acl_install.php';
         }
@@ -221,7 +221,7 @@ class Installer extends ComposerInstaller
         }
 
         // acl environment
-        if ($this->isZero || $this->clinikalEnv === 'dev') {
+        if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv == 'test') {
             self::messageToCLI('Upgrading acl for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
             $ACL_UPGRADE = require $projectPath.'/acl/acl_upgrade.php';
             foreach ($ACL_UPGRADE as $version => $function){
