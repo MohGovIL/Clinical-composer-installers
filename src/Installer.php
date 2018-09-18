@@ -57,7 +57,7 @@ class Installer extends ComposerInstaller
         $this->setEnvSettings();
 
         // acl environment
-        if ($this->isZero || $this->clinikalEnv === 'dev') {
+        if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv === 'test') {
             //for connection with ssl
             $GLOBALS['debug_ssl_mysql_connection'] = false;
             require $this->basePath . 'library/acl.inc';
@@ -118,7 +118,7 @@ class Installer extends ComposerInstaller
         if ( $this->clinikalEnv != 'prod') {
             $this->appendToGitignore($this->getRelativePath($package));
             // change branch to track remote composer branch
-            shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
+          //  shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
         } else {
 
             if (is_dir($projectPath ."/.git")){
