@@ -60,7 +60,7 @@ class Installer extends ComposerInstaller
         $this->setIsCloned();
 
         // acl environment
-        if ($this->isZero || $this->clinikalEnv === 'dev') {
+        if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv === 'test') {
             //for connection with ssl
             $GLOBALS['debug_ssl_mysql_connection'] = false;
             require $this->basePath . 'library/acl.inc';
@@ -109,9 +109,9 @@ class Installer extends ComposerInstaller
                 # link to css file
                 VerticalAddonsActions::createCssLink($this,$package);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
-                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+               // $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
-                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
+               // $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
                 # append cron jobs
@@ -126,7 +126,7 @@ class Installer extends ComposerInstaller
         if ( $this->clinikalEnv != 'prod') {
             $this->appendToGitignore($this->getRelativePath($package));
             // change branch to track remote composer branch
-            shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
+          //  shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
         } else {
 
             if (is_dir($projectPath ."/.git")){
@@ -149,7 +149,7 @@ class Installer extends ComposerInstaller
             }
 
             // acl environment
-            if ($this->isZero || $this->clinikalEnv == 'dev') {
+            if ($this->isZero || $this->clinikalEnv == 'dev' || $this->clinikalEnv == 'test') {
                 self::messageToCLI("Installing acl for package - " . $package->getPrettyName());
                 require $projectPath . '/acl/acl_install.php';
             }
@@ -217,6 +217,10 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createMenuLink($this,$target);
                 # append cron jobs
                 VerticalAddonsActions::appendCronJobs($this,$target);
+                # link to css file
+                VerticalAddonsActions::createCssLink($this,$target);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
+                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 break;
         }
 
@@ -231,7 +235,7 @@ class Installer extends ComposerInstaller
             }
 
             // acl environment
-            if ($this->isZero || $this->clinikalEnv === 'dev') {
+            if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv == 'test') {
                 self::messageToCLI('Upgrading acl for package - ' . $target->getPrettyName() . ' from version ' . $lastTag . '.');
                 $ACL_UPGRADE = require $projectPath . '/acl/acl_upgrade.php';
                 foreach ($ACL_UPGRADE as $version => $function) {

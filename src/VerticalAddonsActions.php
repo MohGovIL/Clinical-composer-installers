@@ -18,10 +18,10 @@ class VerticalAddonsActions
 
     const OPENEMR_CSS_PATH = 'interface/themes/';
     const VERTICAL_CSS_FOLDER_PATH='css/';
-    const OPENEMR_CSS_FILENAME = 'style_vertical.css';
-    const CSS_ORIGIN_NAME='style_clinikal.css';
-    const ZERO_OPENEMR_CSS_FILENAME = 'style_zero_vertical.css';
-    const ZERO_CSS_ORIGIN_NAME='style_zero_clinikal.css';
+    const OPENEMR_CSS_FILENAME = 'clinikal_fixes.scss';
+    const CSS_ORIGIN_NAME='clinikal_fixes.scss';
+    const ZERO_OPENEMR_CSS_FILENAME = 'clinikal_zero_fixes.scss';
+    const ZERO_CSS_ORIGIN_NAME='clinikal_zero_fixes.scss';
 
     const OPENEMR_MENUS_PATH = 'sites/default/documents/custom_menus/';
     const VERTICAL_MENUS_FOLDER_PATH='menus/';
@@ -42,10 +42,10 @@ class VerticalAddonsActions
      */
     static function createCssLink(Installer $installer, PackageInterface $package)
     {
-        symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
-        symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.'rtl_'.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.'rtl_'.self::OPENEMR_CSS_FILENAME);
-        symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
-        symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.'rtl_'.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.'rtl_'.self::ZERO_OPENEMR_CSS_FILENAME);
+        if (!is_link($installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME)) {
+            symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
+            symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
+        }
 
         Installer::messageToCLI("Create links to css files of the vertical");
     }
