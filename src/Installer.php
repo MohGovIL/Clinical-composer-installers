@@ -27,6 +27,8 @@ class Installer extends ComposerInstaller
     const VERTICAL_PACKAGE = 'clinikal-vertical';
     const ZF_MODULES = 'clinikal-zf-modules';
     const FORMHANDLER_FORMS = 'clinikal-formhandler-forms';
+    const VERTICAL_DOCUMENTS = 'clinikal-vertical-documents';
+
 
     const RED="\033[31m";
     const NC="\033[0m";
@@ -109,6 +111,10 @@ class Installer extends ComposerInstaller
                 # append cron jobs
                 VerticalAddonsActions::appendCronJobs($this,$package);
                 break;
+            case self::VERTICAL_DOCUMENTS:
+                VerticalAddonsActions::createDocumentsLinks($this,$package);
+                break;
+
 
         }
 

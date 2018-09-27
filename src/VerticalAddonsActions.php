@@ -108,6 +108,26 @@ class VerticalAddonsActions
         }
 
     }
+    /**
+     * Create links in openemr's doctemplates folder for every vertical's document.
+     * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
+     * @param PackageInterface $package
+     */
+    static function createDocumentsLinks(Installer $installer, PackageInterface $package)
+    {
+        $documents = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_DOCUMENTS_PATH.'*.docx');
+        foreach($documents as $document) {
+            $documentName = pathinfo($document, PATHINFO_BASENAME);
+
+            if (!is_link($installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName)) {
+                echo $menu;
+                symlink($menu ,$installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName);
+                $installer->appendToGitignore(self::OPENEMR_DOCUMENTS_PATH.$documentName);
+                Installer::messageToCLI("Create link to $documentName from menus folder");
+            }
+        }
+
+    }
 
     static function appendCronJobs(Installer $installer, PackageInterface $package)
     {
