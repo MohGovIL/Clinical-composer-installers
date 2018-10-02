@@ -120,8 +120,8 @@ class VerticalAddonsActions
             $documentName = pathinfo($document, PATHINFO_BASENAME);
 
             if (!is_link($installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName)) {
-                echo $menu;
-                symlink($menu ,$installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName);
+                echo $documentName;
+                symlink($document ,$installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName);
                 $installer->appendToGitignore(self::OPENEMR_DOCUMENTS_PATH.$documentName);
                 Installer::messageToCLI("Create link to $documentName from menus folder");
             }

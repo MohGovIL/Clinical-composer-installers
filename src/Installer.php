@@ -110,9 +110,10 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createMenuLink($this,$package);
                 # append cron jobs
                 VerticalAddonsActions::appendCronJobs($this,$package);
+                VerticalAddonsActions::createDocumentsLinks($this,$package);
                 break;
             case self::VERTICAL_DOCUMENTS:
-                VerticalAddonsActions::createDocumentsLinks($this,$package);
+
                 break;
 
 
@@ -214,6 +215,7 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCssLink($this,$target);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
+                VerticalAddonsActions::createDocumentsLinks($this,$package);
                 break;
         }
 
