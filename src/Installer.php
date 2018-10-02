@@ -215,7 +215,7 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCssLink($this,$target);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
-                VerticalAddonsActions::createDocumentsLinks($this,$package);
+                VerticalAddonsActions::createDocumentsLinks($this,$target);
                 break;
         }
 
