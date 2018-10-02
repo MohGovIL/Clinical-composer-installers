@@ -32,6 +32,8 @@ class VerticalAddonsActions
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
     const CLINIKAL_CRONJOB_FILE='install/cron_jobs/clinikal_cron';
     const CLINIKAL_CRONJOB_LOG='install/cron_jobs/cron_jobs_log';
+    const VERTICAL_MODULES_DOCUMENTS_PATH='doctemplates/';
+    const OPENEMR_DOCUMENTS_PATH = 'sites/default/documents/doctemplates/';
 
 
 
