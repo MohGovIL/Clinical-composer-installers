@@ -224,8 +224,9 @@ class Installer extends ComposerInstaller
         $sqlFolder = $projectPath.'/sql';
         $this->upgradeFromSqlFolder($sqlFolder, $tagVersion);
         if($this->isZero) {
-           $zeroSqlFolder = $sqlFolder.'/zero';
+            $zeroSqlFolder = $sqlFolder.'/zero';
             $this->upgradeFromSqlFolder($zeroSqlFolder, $tagVersion);
+            upgradeFromSqlFile($zeroSqlFolder . '/runOnEveryZeroUpgrade.sql');
         }
 
         // acl environment
