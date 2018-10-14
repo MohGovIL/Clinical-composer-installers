@@ -223,6 +223,7 @@ class Installer extends ComposerInstaller
         self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
         $sqlFolder = $projectPath.'/sql';
         $this->upgradeFromSqlFolder($sqlFolder, $tagVersion);
+        self::messageToCLI('Finished running generic upgrade sql files');
         if($this->isZero) {
             self::messageToCLI('Running zero upgrade sql files');
             $zeroSqlFolder = $sqlFolder.'/zero';
