@@ -180,13 +180,15 @@ class Installer extends ComposerInstaller
     public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
     {
 
-        $this->initClinikal();
+        self::messageToCLI('Starting composer update');
 
+        $this->initClinikal();
+        self::messageToCLI('1asd');
         // composer update
         LibraryInstaller::update($repo,$initial, $target);
-
+        self::messageToCLI('2asd');
         if($this->getPrefix($initial->getType()) !== 'clinikal') return;
-
+        self::messageToCLI('3asd');
         //$projectPath = strpos($this->getInstallPath($target), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
         $projectPath = $this->getInstallPath($target);
 
@@ -216,9 +218,10 @@ class Installer extends ComposerInstaller
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
                 $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 VerticalAddonsActions::createDocumentsLinks($this,$target);
+                self::messageToCLI('3.5asd');
                 break;
         }
-
+        self::messageToCLI('4asd');
         #sql upgrade
         self::messageToCLI('Upgrading sql for package - ' .$target->getPrettyName() .' from version ' . $lastTag . '.');
         $sqlFolder = $projectPath.'/sql';
