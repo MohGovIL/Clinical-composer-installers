@@ -224,6 +224,7 @@ class Installer extends ComposerInstaller
         $sqlFolder = $projectPath.'/sql';
         $this->upgradeFromSqlFolder($sqlFolder, $tagVersion);
         if($this->isZero) {
+            self::messageToCLI('Running zero upgrade sql files');
             $zeroSqlFolder = $sqlFolder.'/zero';
             $this->upgradeFromSqlFolder($zeroSqlFolder, $tagVersion);
             self::messageToCLI('Running - ' . $zeroSqlFolder . '/runOnEveryZeroUpgrade.sql');
