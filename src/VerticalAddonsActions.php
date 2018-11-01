@@ -31,7 +31,7 @@ class VerticalAddonsActions
 
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
     const CLINIKAL_CRONJOB_FILE='install/cron_jobs/clinikal_cron';
-    const CLINIKAL_CRONJOB_LOG='install/cron_jobs/cron_jobs_log';
+    const CLINIKAL_CRONJOB_LOG='logs/cron_jobs_log';
     const VERTICAL_MODULES_DOCUMENTS_PATH='doctemplates/';
     const OPENEMR_DOCUMENTS_PATH = 'sites/default/documents/doctemplates/';
 
@@ -47,6 +47,8 @@ class VerticalAddonsActions
         if (!is_link($installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME)) {
             symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
             symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
+            $installer->appendToGitignore(self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
+            $installer->appendToGitignore(self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
         }
 
         Installer::messageToCLI("Create links to css files of the vertical");
@@ -175,6 +177,13 @@ class VerticalAddonsActions
             if (!in_array($job, $existJobs)){
 
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
+            }
+
+            //create logs file if missing
+            if (!is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG)) {
+                touch($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG);
+                chmod($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG, 0766);
+                $installer->appendToGitignore('clinikal/'.self::CLINIKAL_CRONJOB_LOG);
             }
         }
     }

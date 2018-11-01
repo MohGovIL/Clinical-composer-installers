@@ -110,10 +110,6 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::installUpdateForms($this,$package);
                 # link to css file
                 VerticalAddonsActions::createCssLink($this,$package);
-                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
-               // $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
-                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
-               // $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.'rtl_'.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
                 # append cron jobs
@@ -226,8 +222,7 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::appendCronJobs($this,$target);
                 # link to css file
                 VerticalAddonsActions::createCssLink($this,$target);
-                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::OPENEMR_CSS_FILENAME);
-                $this->appendToGitignore(VerticalAddonsActions::OPENEMR_CSS_PATH.VerticalAddonsActions::ZERO_OPENEMR_CSS_FILENAME);
+
                 VerticalAddonsActions::createDocumentsLinks($this,$target);
                 break;
         }
