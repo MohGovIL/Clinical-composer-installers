@@ -93,7 +93,7 @@ class Installer extends ComposerInstaller
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
-                if($this->isCloned == "false") { // if cloned then table already exists
+                if($this->isCloned != "true") { // if cloned then table already exists
                     FormhandlerActions::installTable($this, $this->getInstallPath($package));
                 }
                 else {
@@ -147,7 +147,7 @@ class Installer extends ComposerInstaller
             //shell_exec("git add $projectPath");l
         }
 
-        if($this->isCloned == "false") { // if cloned then table already exists
+        if($this->isCloned != "true") { // if cloned then table already exists
             //run sql queries for installation
             self::messageToCLI("Running sql queries for installation for package - " . $package->getPrettyName());
             upgradeFromSqlFile($projectPath . '/sql/install.sql', true);
@@ -232,7 +232,7 @@ class Installer extends ComposerInstaller
                 break;
         }
 
-        if($this->isCloned == "false") { // if cloned then table already exists
+        if($this->isCloned != "true") { // if cloned then table already exists
             #sql upgrade
             self::messageToCLI('Upgrading sql for package - ' . $target->getPrettyName() . ' from version ' . $lastTag . '.');
             $sqlFolder = $projectPath . '/sql';
