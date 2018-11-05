@@ -235,7 +235,7 @@ class Installer extends ComposerInstaller
             if ($this->isZero) {
                 $zeroSqlFolder = $sqlFolder . '/zero';
                 $this->upgradeFromSqlFolder($zeroSqlFolder, $tagVersion);
-                upgradeFromSqlFile($projectPath . '/sql/zero/sqlUpgradeZero.sql', true);
+                //upgradeFromSqlFile($projectPath . '/sql/zero/sqlUpgradeZero.sql', true);
 
             }
 
