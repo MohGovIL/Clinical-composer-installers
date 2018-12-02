@@ -244,7 +244,7 @@ class Installer extends ComposerInstaller
                 self::messageToCLI('Upgrading acl for package - ' . $target->getPrettyName() . ' from version ' . $lastTag . '.');
                 $ACL_UPGRADE = require $projectPath . '/acl/acl_upgrade.php';
                 foreach ($ACL_UPGRADE as $version => $function) {
-                    if (strcmp($version, $lastTag) < 0) {
+                    if (strcmp($version, $tagVersion) < 0) {
                         continue;
                     }
                     $function();
