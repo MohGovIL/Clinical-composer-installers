@@ -70,7 +70,7 @@ class Installer extends ComposerInstaller
                 include_once("$phpgacl_location/gacl_api.class.php");
             }
             require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
-            require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
+           // require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
         }
 
         $this->isInit = true;
@@ -242,6 +242,12 @@ class Installer extends ComposerInstaller
             // acl environment
             if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv == 'test') {
                 self::messageToCLI('Upgrading acl for package - ' . $target->getPrettyName() . ' from version ' . $lastTag . '.');
+                if (is_file($projectPath . '/acl/Roles_ids.php')) {
+                    require $projectPath . '/acl/Roles_ids.php';
+                } else {
+                    echo 'Missing Roles_ids.php file in the vertical';
+                    exit(1);
+                }
                 $ACL_UPGRADE = require $projectPath . '/acl/acl_upgrade.php';
                 foreach ($ACL_UPGRADE as $version => $function) {
                     if (strcmp($version, $tagVersion) < 0) {
