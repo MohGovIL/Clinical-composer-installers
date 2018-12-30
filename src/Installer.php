@@ -201,7 +201,7 @@ class Installer extends ComposerInstaller
 
         //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
         $lastTag = $initial->isDev() ? $this->getLastTag($projectPath) : $initial->getPrettyVersion();
-        preg_match('/\w+_(\d+)_(\d+)_(\d+)$/',  $lastTag, $matches);
+        preg_match('/\w+_(\d+)_(\d+)_(\d+)/',  $lastTag, $matches);
         $tagVersion = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
         //$lastTag = substr($lastTag,1,strlen($lastTag));
         echo $target->getType();
@@ -378,6 +378,7 @@ class Installer extends ComposerInstaller
     private function getLastTag($pathToPackage)
     {
         $tag =  shell_exec("cd $pathToPackage && git describe --tags --abbrev=0");
+        echo $tag;
         return is_null($tag) ? 'v0.1.0' : $tag;
     }
 
