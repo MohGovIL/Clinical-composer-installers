@@ -126,23 +126,6 @@ class Installer extends ComposerInstaller
        // $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
         $projectPath = $this->getInstallPath($package);
 
-        if ( $this->clinikalEnv != 'prod') {
-            $this->appendToGitignore($this->getRelativePath($package));
-            // change branch to track remote composer branch
-          //  shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
-        } else {
-
-            if (is_dir($projectPath ."/.git")){
-                self::messageToCLI("Removing .git from packages");
-               // $this->deleteDotGitFolder( $this->basePath.$projectPath ."/.git");
-            }
-            // remove .git from production version
-            // put .git in the ignore
-            $this->appendToGitignore($projectPath.'/.git');
-            //adding all the package to special repository for production installation.
-            //shell_exec("git add $projectPath");l
-        }
-
         if($this->isCloned !== "true") { // if cloned then table already exists
             //run sql queries for installation
             self::messageToCLI("Running sql queries for installation for package - " . $package->getPrettyName());
@@ -290,13 +273,17 @@ class Installer extends ComposerInstaller
     }
 
     /**
-     * add a package to .gitignore .
+     * add a package to .gitignore
      * @param $ignoreFile
      */
-    public function appendToGitignore($ignoreFile)
+    public function appendToGitignore($file, $ignorePath = '')
     {
-        file_put_contents($this->basePath.'.gitignore', PHP_EOL . $ignoreFile, FILE_APPEND);
-        self::messageToCLI('Adding to .gitignore - ' . $ignoreFile);
+        $ignoreFile = $this->basePath.$ignorePath.'.gitignore';
+        if (!is_file($ignorePath)) {
+            touch($ignoreFile);
+        }
+        file_put_contents($ignoreFile, PHP_EOL . $file, FILE_APPEND);
+        self::messageToCLI('Adding to .gitignore - ' . $file);
     }
 
 

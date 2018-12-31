@@ -30,7 +30,7 @@ class Zf2ModulesActions
             symlink($target ,$installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName);
             Installer::messageToCLI("Create link to module - $moduleName");
             self::addToApplicationConf($installer,$moduleName);
-            $installer->appendToGitignore(self::OPENEMR_MODULES_PATH.$moduleName);
+            $installer->appendToGitignore($moduleName, self::OPENEMR_MODULES_PATH);
         }
 
     }

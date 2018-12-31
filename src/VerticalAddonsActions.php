@@ -106,7 +106,7 @@ class VerticalAddonsActions
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menuName)) {
                 echo $menu;
                 symlink($menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
-                $installer->appendToGitignore(self::OPENEMR_MENUS_PATH.$menuName);
+                $installer->appendToGitignore($menuName, self::OPENEMR_MENUS_PATH);
                 Installer::messageToCLI("Create link to $menuName from menus folder");
             }
         }
@@ -126,7 +126,7 @@ class VerticalAddonsActions
             if (!is_link($installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName)) {
                 echo $documentName;
                 symlink($document ,$installer->basePath.self::OPENEMR_DOCUMENTS_PATH.$documentName);
-                $installer->appendToGitignore(self::OPENEMR_DOCUMENTS_PATH.$documentName);
+                $installer->appendToGitignore($documentName, self::OPENEMR_DOCUMENTS_PATH);
                 Installer::messageToCLI("Create link to $documentName from menus folder");
             }
         }
