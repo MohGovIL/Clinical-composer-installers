@@ -54,14 +54,12 @@ class Installer extends ComposerInstaller
         $this->basePath = dirname($this->vendorDir) .'/';
         $this->clinikalPath = $this->basePath . 'clinikal/';
         //require functions for db connection form 'clinikal' folder
-        require $this->clinikalPath . 'scripts/dbConnect.php';
-        require $this->clinikalPath . 'install/upgrade/functions/clinikal_sql_upgrade_fx.php';
 
         $this->setEnvSettings();
 
         $this->setIsCloned();
 
-        // acl environment
+       /* // acl environment
         if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv === 'test') {
             //for connection with ssl
             $GLOBALS['debug_ssl_mysql_connection'] = false;
@@ -71,7 +69,7 @@ class Installer extends ComposerInstaller
             }
             require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
            // require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
-        }
+        }*/
 
         $this->isInit = true;
     }
