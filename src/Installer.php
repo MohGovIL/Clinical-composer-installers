@@ -128,7 +128,7 @@ class Installer extends ComposerInstaller
 
         if($this->isCloned !== "true") { // if cloned then table already exists
             //run sql queries for installation
-            self::messageToCLI("Running sql queries for installation for package - " . $package->getPrettyName());
+         /*   self::messageToCLI("Running sql queries for installation for package - " . $package->getPrettyName());
             upgradeFromSqlFile($projectPath . '/sql/install.sql', true);
             if ($this->isZero) {
                 upgradeFromSqlFile($projectPath . '/sql/zero/sqlUpgradeZero.sql', true);
@@ -138,7 +138,7 @@ class Installer extends ComposerInstaller
             if ($this->isZero || $this->clinikalEnv == 'dev' || $this->clinikalEnv == 'test') {
                 self::messageToCLI("Installing acl for package - " . $package->getPrettyName());
                 require $projectPath . '/acl/acl_install.php';
-            }
+            }*/
         }
         else {
             self::messageToCLI("Skipping vertical sql queries - DB was cloned");
