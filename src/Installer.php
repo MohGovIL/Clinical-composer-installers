@@ -228,44 +228,6 @@ class Installer extends ComposerInstaller
 
 
     /**
-     * get list of sql upgrade files
-     * @param $upgradeFolder
-     * @return array
-     */
-    private function getUpgradeFilesList($upgradeFolder)
-    {
-        $dh = opendir($upgradeFolder);
-        $versions = array();
-        while (false !== ($sfname = readdir($dh))) {
-            if (substr($sfname, 0, 1) == '.') continue;
-            if (preg_match('/^\d+_\d+_\d+-to-(\d+)_(\d+)_(\d+)_upgrade.sql$/', $sfname, $matches)) {
-                $version = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
-                $versions[$version] = $sfname;
-            }
-        }
-        closedir($dh);
-        ksort($versions);
-
-        return $versions;
-    }
-
-    /**
-     * gets name of folder with upgrade sql files and performs upgrade based on the files within
-     * @param $filesFolder
-     * @param $tagVersion
-     */
-    private function upgradeFromSqlFolder($filesFolder, $tagVersion)
-    {
-        $filesList = $this->getUpgradeFilesList($filesFolder);
-
-        foreach ($filesList as $version => $filename) {
-            //   print_r($form_old_version);
-            if (strcmp($version, $tagVersion) < 0) continue;
-            upgradeFromSqlFile($filesFolder .'/'.$filename, true);
-        }
-    }
-
-    /**
      *
      * @param $pathToPackage
      * @return string
