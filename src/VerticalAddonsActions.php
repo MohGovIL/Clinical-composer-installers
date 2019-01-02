@@ -36,7 +36,7 @@ class VerticalAddonsActions
 
     const CLINIKAL_SQL_INSTALL_FILE='install/sql/verticalAddons.sql';
     const CLINIKAL_SQL_UPGRADE_FOLDER='install/upgrade/vertical/sql/';
-    const CLINIKAL_SQL_ZERO_UPGRADE_FOLDER='install/upgrade/vertical/zero_sql';
+    const CLINIKAL_SQL_ZERO_UPGRADE_FOLDER='install/upgrade/vertical/zero_sql/';
     const CLINIKAL_ACL_INSTALL_FILE='install/acl/acl_vertical_addons.php';
     const CLINIKAL_ACL_UPGRADE_FILE='install/upgrade/vertical/acl/acl_upgrade_clinikal.php';
     const CLINIKAL_ACL_ROLES_FILE='install/upgrade/vertical/acl/Roles_ids.php';
