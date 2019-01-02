@@ -28,13 +28,21 @@ class VerticalAddonsActions
 
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
-
+    const VERTICAL_SQL_FOLDER_PATH='sql/';
+    const VERTICAL_SQL_ZERO_FOLDER_PATH='sql/zero/';
+    const VERTICAL_ACL_FOLDER_PATH='acl/';
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
+    const VERTICAL_MODULES_DOCUMENTS_PATH='doctemplates/';
+
+    const CLINIKAL_SQL_INSTALL_FILE='install/sql/verticalAddons.sql';
+    const CLINIKAL_SQL_UPGRADE_FOLDER='install/upgrade/vertical/sql/';
+    const CLINIKAL_SQL_ZERO_UPGRADE_FOLDER='install/upgrade/vertical/zero_sql';
+    const CLINIKAL_ACL_INSTALL_FILE='install/acl/acl_vertical_addons.php';
+    const CLINIKAL_ACL_UPGRADE_FILE='install/upgrade/vertical/acl/acl_upgrade_clinikal.php';
+    const CLINIKAL_ACL_ROLES_FILE='install/upgrade/vertical/acl/Roles_ids.php';
     const CLINIKAL_CRONJOB_FILE='install/cron_jobs/clinikal_cron';
     const CLINIKAL_CRONJOB_LOG='logs/cron_jobs_log';
-    const VERTICAL_MODULES_DOCUMENTS_PATH='doctemplates/';
     const OPENEMR_DOCUMENTS_PATH = 'sites/default/documents/doctemplates/';
-
 
 
     /**
@@ -131,6 +139,67 @@ class VerticalAddonsActions
             }
         }
 
+    }
+
+    /**
+     * Create links for vertical for every vertical's SQL file.
+     * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
+     * @param PackageInterface $package
+     */
+    static function createSqlLinks(Installer $installer, PackageInterface $package)
+    {
+        if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE)) {
+            symlink($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'install.sql' ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE);
+            $installer->appendToGitignore(self::CLINIKAL_SQL_INSTALL_FILE, $installer->clinikalPath);
+        }
+
+        $sqlFiles = glob($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'*.sql');
+        foreach($sqlFiles as $sqlFile) {
+            $fileName = pathinfo($sqlFile, PATHINFO_BASENAME);
+            if ($fileName === 'install.sql')continue;
+            if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName)) {
+                symlink($sqlFile ,$installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName);
+                $installer->appendToGitignore(self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName, $installer->clinikalPath);
+                Installer::messageToCLI("Create link to $fileName from sql folder");
+            }
+        }
+
+        $sqlZeroFiles = glob($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_ZERO_FOLDER_PATH.'*.sql');
+        foreach($sqlZeroFiles as $sqlFile) {
+            $fileName = pathinfo($sqlFile, PATHINFO_BASENAME);
+            if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName)) {
+                symlink($sqlFile ,$installer->clinikalPath.self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName);
+                $installer->appendToGitignore(self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName, $installer->clinikalPath);
+                Installer::messageToCLI("Create link to $fileName from zero sql folder");
+            }
+        }
+
+    }
+
+    /**
+     * Create links for vertical for every vertical's SQL file.
+     * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
+     * @param PackageInterface $package
+     */
+    static function createAclLinks(Installer $installer, PackageInterface $package)
+    {
+        if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE)) {
+            symlink($installer->getInstallPath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_install.php', $installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE);
+            $installer->appendToGitignore(self::CLINIKAL_ACL_INSTALL_FILE, $installer->clinikalPath);
+            Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_INSTALL_FILE);
+        }
+
+        if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_UPGRADE_FILE)) {
+            symlink($installer->getInstallPath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_upgrade.php', $installer->clinikalPath . self::CLINIKAL_ACL_UPGRADE_FILE);
+            $installer->appendToGitignore(self::CLINIKAL_ACL_UPGRADE_FILE, $installer->clinikalPath);
+            Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_UPGRADE_FILE);
+        }
+
+        if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_ROLES_FILE)) {
+            symlink($installer->getInstallPath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'Roles_ids.php', $installer->clinikalPath . self::CLINIKAL_ACL_ROLES_FILE);
+            $installer->appendToGitignore(self::CLINIKAL_ACL_ROLES_FILE, $installer->clinikalPath);
+            Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_ROLES_FILE);
+        }
     }
 
     static function appendCronJobs(Installer $installer, PackageInterface $package)

@@ -38,7 +38,6 @@ class Installer extends ComposerInstaller
     public $clinikalPath;
     public $clinikalEnv;
     public $isZero;
-    public $isCloned;
     private $isInit = false;
 
     protected $packageTypes;
@@ -56,20 +55,6 @@ class Installer extends ComposerInstaller
         //require functions for db connection form 'clinikal' folder
 
         $this->setEnvSettings();
-
-        $this->setIsCloned();
-
-       /* // acl environment
-        if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv === 'test') {
-            //for connection with ssl
-            $GLOBALS['debug_ssl_mysql_connection'] = false;
-            require $this->basePath . 'library/acl.inc';
-            if (isset ($phpgacl_location)) {
-                include_once("$phpgacl_location/gacl_api.class.php");
-            }
-            require $this->clinikalPath . 'install/upgrade/functions/acl_upgrade_fx_clinikal.php';
-           // require $this->clinikalPath . 'install/upgrade/functions/Roles_ids.php';
-        }*/
 
         $this->isInit = true;
     }
@@ -91,13 +76,7 @@ class Installer extends ComposerInstaller
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
-                if($this->isCloned !== "true") { // if cloned then table already exists
-                    FormhandlerActions::installTable($this, $this->getInstallPath($package));
-                }
-                else {
-                    self::messageToCLI("Skipping vertical form sql - DB was cloned");
-                }
-                break;
+                                break;
             case self::ZF_MODULES:
                 Zf2ModulesActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 break;
@@ -113,6 +92,9 @@ class Installer extends ComposerInstaller
                 # append cron jobs
                 VerticalAddonsActions::appendCronJobs($this,$package);
                 VerticalAddonsActions::createDocumentsLinks($this,$package);
+                # links for sql and acl install
+                VerticalAddonsActions::createSqlLinks($this,$package);
+                VerticalAddonsActions::createAclLinks($this,$package);
                 break;
             case self::VERTICAL_DOCUMENTS:
 
@@ -123,25 +105,6 @@ class Installer extends ComposerInstaller
 
        // $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
         $projectPath = $this->getInstallPath($package);
-
-        if($this->isCloned !== "true") { // if cloned then table already exists
-            //run sql queries for installation
-         /*   self::messageToCLI("Running sql queries for installation for package - " . $package->getPrettyName());
-            upgradeFromSqlFile($projectPath . '/sql/install.sql', true);
-            if ($this->isZero) {
-                upgradeFromSqlFile($projectPath . '/sql/zero/sqlUpgradeZero.sql', true);
-            }
-
-            // acl environment
-            if ($this->isZero || $this->clinikalEnv == 'dev' || $this->clinikalEnv == 'test') {
-                self::messageToCLI("Installing acl for package - " . $package->getPrettyName());
-                require $projectPath . '/acl/acl_install.php';
-            }*/
-        }
-        else {
-            self::messageToCLI("Skipping vertical sql queries - DB was cloned");
-            self::messageToCLI("Skipping vertical acl installation - DB was cloned");
-        }
 
         //create links for git hooks
         if ($this->clinikalEnv == 'dev') {
@@ -205,42 +168,11 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCssLink($this,$target);
 
                 VerticalAddonsActions::createDocumentsLinks($this,$target);
+
+                # links for sql and acl install
+                VerticalAddonsActions::createSqlLinks($this,$target);
+                VerticalAddonsActions::createAclLinks($this,$target);
                 break;
-        }
-
-        if($this->isCloned !== "true") { // if cloned then table already exists
-            #sql upgrade
-            self::messageToCLI('Upgrading sql for package - ' . $target->getPrettyName() . ' from version ' . $lastTag . '.');
-            $sqlFolder = $projectPath . '/sql';
-            $this->upgradeFromSqlFolder($sqlFolder, $tagVersion);
-            if ($this->isZero) {
-                $zeroSqlFolder = $sqlFolder . '/zero';
-                $this->upgradeFromSqlFolder($zeroSqlFolder, $tagVersion);
-                //upgradeFromSqlFile($projectPath . '/sql/zero/sqlUpgradeZero.sql', true);
-
-            }
-
-            // acl environment
-            if ($this->isZero || $this->clinikalEnv === 'dev' || $this->clinikalEnv == 'test') {
-                self::messageToCLI('Upgrading acl for package - ' . $target->getPrettyName() . ' from version ' . $lastTag . '.');
-                if (is_file($projectPath . '/acl/Roles_ids.php')) {
-                    require $projectPath . '/acl/Roles_ids.php';
-                } else {
-                    echo 'Missing Roles_ids.php file in the vertical';
-                    exit(1);
-                }
-                $ACL_UPGRADE = require $projectPath . '/acl/acl_upgrade.php';
-                foreach ($ACL_UPGRADE as $version => $function) {
-                    if (strcmp($version, $tagVersion) < 0) {
-                        continue;
-                    }
-                    $function();
-                }
-            }
-        }
-        else {
-            self::messageToCLI("Skipping vertical sql upgrade queries - DB was cloned");
-            self::messageToCLI("Skipping vertical acl upgrade - DB was cloned");
         }
 
         //create links for git hooks
@@ -290,32 +222,10 @@ class Installer extends ComposerInstaller
      */
     private function setEnvSettings()
     {
-        $sql = "SELECT gl_name, gl_value FROM globals WHERE gl_name IN('clinikal_env', 'zero_installation_type')";
-        $stmt = \DBconnect::getConnection()->prepare($sql);
-        $stmt->execute();
-        $results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
-        $this->isZero = false;
-        foreach ($results as $result)
-            switch ($result['gl_name']) {
-                case 'zero_installation_type':
-                    $this->isZero = ($result['gl_value'] && !empty($result['gl_value'])) ? true : false;
-                    break;
-            }
-
         $this->clinikalEnv = $this->composer->getConfig()->get('clinikal-env');
         $this->installName = $this->composer->getConfig()->get('install-name');
-
     }
 
-    /**
-     * isCloned setter method
-     * @return mixed
-     */
-    private function setIsCloned()
-    {
-        $this->isCloned = $this->composer->getConfig()->get('db-cloned');
-    }
 
     /**
      * get list of sql upgrade files
