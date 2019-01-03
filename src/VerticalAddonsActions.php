@@ -52,14 +52,17 @@ class VerticalAddonsActions
      */
     static function createCssLink(Installer $installer, PackageInterface $package)
     {
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME, $installer->basePath);
         if (!is_link($installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME)) {
-            symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
-            symlink($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
+            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
             $installer->appendToGitignore(self::OPENEMR_CSS_FILENAME, self::OPENEMR_CSS_PATH);
-            $installer->appendToGitignore(self::ZERO_OPENEMR_CSS_FILENAME, self::OPENEMR_CSS_PATH);
+            Installer::messageToCLI("Create links to css files of the vertical");
         }
-
-        Installer::messageToCLI("Create links to css files of the vertical");
+        if (!is_link($installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME)) {
+            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
+            $installer->appendToGitignore(self::ZERO_OPENEMR_CSS_FILENAME, self::OPENEMR_CSS_PATH);
+            Installer::messageToCLI("Create links to css files of the zero vertical");
+        }
     }
 
 
@@ -73,7 +76,7 @@ class VerticalAddonsActions
         $modules = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH);
         foreach($modules as $module) {
             if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH . $module) || $module === '.' || $module === '..')continue;
-            Zf2ModulesActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module, $module);
+            Zf2ModulesActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module, $module);
         }
 
     }
@@ -89,7 +92,7 @@ class VerticalAddonsActions
         $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
         foreach($forms as $form) {
             if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
-            FormhandlerActions::createLink($installer, $installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
+            FormhandlerActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
             FormhandlerActions::linkToCouchDbJson($installer, $form);
         }
 
@@ -103,6 +106,7 @@ class VerticalAddonsActions
      */
     static function createMenuLink(Installer $installer, PackageInterface $package)
     {
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MENUS_PATH, $installer->basePath);
         $menus = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.'*.json');
         foreach ($menus as $menu ) {
             $menuName = pathinfo($menu, PATHINFO_BASENAME);
@@ -112,8 +116,11 @@ class VerticalAddonsActions
                $menuName = 'patient_menus/' . $splitMenuName[1];
             }
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menuName)) {
-                echo $menu;
-                symlink($menu ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
+                if (strpos($menuName,'patient_') === 0) {
+                    symlink($baseTarget.'../'.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
+                } else {
+                    symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
+                }
                 $installer->appendToGitignore($menuName, self::OPENEMR_MENUS_PATH);
                 Installer::messageToCLI("Create link to $menuName from menus folder");
             }
@@ -121,6 +128,7 @@ class VerticalAddonsActions
 
     }
     /**
+     * @deprecated - doc templates not in the git
      * Create links in openemr's doctemplates folder for every vertical's document.
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
@@ -148,27 +156,30 @@ class VerticalAddonsActions
      */
     static function createSqlLinks(Installer $installer, PackageInterface $package)
     {
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE, $installer->basePath);
         if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE)) {
-            symlink($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'install.sql' ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE);
+            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'install.sql' ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE);
             $installer->appendToGitignore(self::CLINIKAL_SQL_INSTALL_FILE, 'clinikal/');
         }
 
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER, $installer->basePath);
         $sqlFiles = glob($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'*.sql');
         foreach($sqlFiles as $sqlFile) {
             $fileName = pathinfo($sqlFile, PATHINFO_BASENAME);
             if ($fileName === 'install.sql')continue;
             if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName)) {
-                symlink($sqlFile ,$installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName);
+                symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.$fileName ,$installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName);
                 $installer->appendToGitignore(self::CLINIKAL_SQL_UPGRADE_FOLDER.$fileName, 'clinikal/');
                 Installer::messageToCLI("Create link to $fileName from sql folder");
             }
         }
 
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER, $installer->basePath);
         $sqlZeroFiles = glob($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_ZERO_FOLDER_PATH.'*.sql');
         foreach($sqlZeroFiles as $sqlFile) {
             $fileName = pathinfo($sqlFile, PATHINFO_BASENAME);
             if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName)) {
-                symlink($sqlFile ,$installer->clinikalPath.self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName);
+                symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_ZERO_FOLDER_PATH.$fileName  ,$installer->clinikalPath.self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName);
                 $installer->appendToGitignore(self::CLINIKAL_SQL_ZERO_UPGRADE_FOLDER.$fileName, 'clinikal/');
                 Installer::messageToCLI("Create link to $fileName from zero sql folder");
             }
@@ -183,23 +194,27 @@ class VerticalAddonsActions
      */
     static function createAclLinks(Installer $installer, PackageInterface $package)
     {
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_ACL_INSTALL_FILE, $installer->basePath);
         if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE)) {
-            symlink($installer->getInstallPath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_install.php', $installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE);
+            symlink($baseTarget.$installer->getRelativePath($package). '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_install.php', $installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE);
             $installer->appendToGitignore(self::CLINIKAL_ACL_INSTALL_FILE, 'clinikal/');
             Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_INSTALL_FILE);
         }
 
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_ACL_UPGRADE_FILE, $installer->basePath);
         if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_UPGRADE_FILE)) {
-            symlink($installer->getInstallPath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_upgrade.php', $installer->clinikalPath . self::CLINIKAL_ACL_UPGRADE_FILE);
+            symlink($baseTarget.$installer->getRelativePath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_upgrade.php', $installer->clinikalPath . self::CLINIKAL_ACL_UPGRADE_FILE);
             $installer->appendToGitignore(self::CLINIKAL_ACL_UPGRADE_FILE, 'clinikal/');
             Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_UPGRADE_FILE);
         }
 
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_ACL_ROLES_FILE, $installer->basePath);
         if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_ROLES_FILE)) {
-            symlink($installer->getInstallPath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'Roles_ids.php', $installer->clinikalPath . self::CLINIKAL_ACL_ROLES_FILE);
+            symlink($baseTarget.$installer->getRelativePath($package) . '/' . self::VERTICAL_ACL_FOLDER_PATH . 'Roles_ids.php', $installer->clinikalPath . self::CLINIKAL_ACL_ROLES_FILE);
             $installer->appendToGitignore(self::CLINIKAL_ACL_ROLES_FILE, 'clinikal/');
             Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_ROLES_FILE);
         }
+        exit(1);
     }
 
     static function appendCronJobs(Installer $installer, PackageInterface $package)

@@ -23,13 +23,16 @@ class Zf2ModulesActions
      * @param \Clinikal\ComposerInstallersClinikalExtender\Installer $installer
      * @param PackageInterface $package
      */
-    static function createLink(Installer $installer, $target , $moduleName)
+    static function createLink(Installer $installer, $relativeTarget , $moduleName)
     {
-        if (!is_link($installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName)) {
 
-            symlink($target ,$installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName);
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MODULES_PATH, $installer->basePath);
+
+        if (!is_link($installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName)) {
+          //  $installer->getRelativePath($target);
+            symlink($baseTarget . $relativeTarget ,$installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName);
             Installer::messageToCLI("Create link to module - $moduleName");
-            self::addToApplicationConf($installer,$moduleName);
+           // self::addToApplicationConf($installer,$moduleName);
             $installer->appendToGitignore($moduleName, self::OPENEMR_MODULES_PATH);
         }
 
