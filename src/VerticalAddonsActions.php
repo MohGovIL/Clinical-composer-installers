@@ -214,7 +214,6 @@ class VerticalAddonsActions
             $installer->appendToGitignore(self::CLINIKAL_ACL_ROLES_FILE, 'clinikal/');
             Installer::messageToCLI("Create link " . self::CLINIKAL_ACL_ROLES_FILE);
         }
-        exit(1);
     }
 
     static function appendCronJobs(Installer $installer, PackageInterface $package)
