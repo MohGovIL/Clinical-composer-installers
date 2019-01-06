@@ -125,7 +125,7 @@ class VerticalAddonsActions
             $menuName = pathinfo($menu, PATHINFO_BASENAME);
 
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.self::PATIENT_MENUS_FOLDER.$menuName)) {
-                symlink($baseTarget.'../'.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.self::PATIENT_MENUS_FOLDER.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.self::PATIENT_MENUS_FOLDER.$menuName);
+                symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.self::PATIENT_MENUS_FOLDER.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.self::PATIENT_MENUS_FOLDER.$menuName);
                 $installer->appendToGitignore($menuName, self::OPENEMR_MENUS_PATH);
                 Installer::messageToCLI("Create link to $menuName from patients menus folder");
             }
