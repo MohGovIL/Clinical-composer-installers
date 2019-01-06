@@ -25,6 +25,7 @@ class VerticalAddonsActions
 
     const OPENEMR_MENUS_PATH = 'sites/default/documents/custom_menus/';
     const VERTICAL_MENUS_FOLDER_PATH='menus/';
+    const PATIENT_MENUS_FOLDER = 'patient_menus/';
 
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
@@ -106,23 +107,27 @@ class VerticalAddonsActions
      */
     static function createMenuLink(Installer $installer, PackageInterface $package)
     {
+        /*main menus*/
         $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MENUS_PATH, $installer->basePath);
         $menus = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.'*.json');
         foreach ($menus as $menu ) {
             $menuName = pathinfo($menu, PATHINFO_BASENAME);
-            /* change for patient file menus */
-            if (strpos($menuName,'patient_') === 0) {
-               $splitMenuName = explode('_', $menuName);
-               $menuName = 'patient_menus/' . $splitMenuName[1];
-            }
             if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.$menuName)) {
-                if (strpos($menuName,'patient_') === 0) {
-                    symlink($baseTarget.'../'.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
-                } else {
-                    symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
-                }
+                symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.$menuName);
                 $installer->appendToGitignore($menuName, self::OPENEMR_MENUS_PATH);
                 Installer::messageToCLI("Create link to $menuName from menus folder");
+            }
+        }
+        /*patient menus*/
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MENUS_PATH . self::PATIENT_MENUS_FOLDER, $installer->basePath);
+        $menus = glob($installer->getInstallPath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.self::PATIENT_MENUS_FOLDER.'*.json');
+        foreach ($menus as $menu ) {
+            $menuName = pathinfo($menu, PATHINFO_BASENAME);
+
+            if (!is_link($installer->basePath.self::OPENEMR_MENUS_PATH.self::PATIENT_MENUS_FOLDER.$menuName)) {
+                symlink($baseTarget.'../'.$installer->getRelativePath($package).'/'.self::VERTICAL_MENUS_FOLDER_PATH.self::PATIENT_MENUS_FOLDER.$menuName ,$installer->basePath.self::OPENEMR_MENUS_PATH.self::PATIENT_MENUS_FOLDER.$menuName);
+                $installer->appendToGitignore($menuName, self::OPENEMR_MENUS_PATH);
+                Installer::messageToCLI("Create link to $menuName from patients menus folder");
             }
         }
 
