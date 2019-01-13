@@ -36,6 +36,7 @@ class VerticalAddonsActions
     const VERTICAL_MODULES_DOCUMENTS_PATH='doctemplates/';
 
     const CLINIKAL_SQL_INSTALL_FILE='install/sql/verticalAddons.sql';
+    const CLINIKAL_SQL_INSTALL_DATA_FILE='install/sql/verticalData.sql';
     const CLINIKAL_SQL_UPGRADE_FOLDER='install/upgrade/vertical/sql/';
     const CLINIKAL_SQL_ZERO_UPGRADE_FOLDER='install/upgrade/vertical/zero_sql/';
     const CLINIKAL_ACL_INSTALL_FILE='install/acl/acl_vertical_addons.php';
@@ -165,6 +166,14 @@ class VerticalAddonsActions
         if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE)) {
             symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'install.sql' ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE);
             $installer->appendToGitignore(self::CLINIKAL_SQL_INSTALL_FILE, 'clinikal/');
+        }
+
+        if (is_file($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'init_vertical_data.sql')) {
+            $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_DATA_FILE, $installer->basePath);
+            if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE)) {
+                symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'init_vertical_data.sql' ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_DATA_FILE);
+                $installer->appendToGitignore(self::CLINIKAL_SQL_INSTALL_DATA_FILE, 'clinikal/');
+            }
         }
 
         $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_UPGRADE_FOLDER, $installer->basePath);
