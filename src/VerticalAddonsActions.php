@@ -170,7 +170,7 @@ class VerticalAddonsActions
 
         if (is_file($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'init_vertical_data.sql')) {
             $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_DATA_FILE, $installer->basePath);
-            if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_FILE)) {
+            if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_DATA_FILE)) {
                 symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_FOLDER_PATH.'init_vertical_data.sql' ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_DATA_FILE);
                 $installer->appendToGitignore(self::CLINIKAL_SQL_INSTALL_DATA_FILE, 'clinikal/');
             }
