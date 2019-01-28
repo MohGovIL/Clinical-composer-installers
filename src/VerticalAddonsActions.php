@@ -280,6 +280,8 @@ class VerticalAddonsActions
             if (!in_array($job, $existJobs)){
 
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
+                //blank line
+                file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL, FILE_APPEND);
             }
 
             //create logs file if missing
