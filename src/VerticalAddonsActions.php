@@ -79,6 +79,14 @@ class VerticalAddonsActions
         foreach($modules as $module) {
             if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH . $module) || $module === '.' || $module === '..')continue;
             Zf2ModulesActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module, $module);
+
+            //link for js and css in zend_modules/public/js (mainly in addictions)
+            if (is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH . $module . '/js')) {
+                Zf2ModulesActions::createJsLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module.'/js/'. strtolower($module), strtolower($module));
+            }
+            if (is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH . $module . '/css')) {
+                Zf2ModulesActions::createJsLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module.'/css/'. strtolower($module), strtolower($module));
+            }
         }
 
     }

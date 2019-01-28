@@ -16,6 +16,8 @@ class Zf2ModulesActions
 
     const APPLICATION_CONF_PATH = 'interface/modules/zend_modules/config/application.config.php';
     const OPENEMR_MODULES_PATH = 'interface/modules/zend_modules/module/';
+    const OPENEMR_MODULES_JS_PATH = 'interface/modules/zend_modules/public/js/';
+    const OPENEMR_MODULES_CSS_PATH = 'interface/modules/zend_modules/public/css/';
 
 
     /**
@@ -35,7 +37,32 @@ class Zf2ModulesActions
             self::addToApplicationConf($installer,$moduleName);
             $installer->appendToGitignore($moduleName, self::OPENEMR_MODULES_PATH);
         }
+    }
 
+    static function createJsLink(Installer $installer, $relativeTarget , $jsFolder)
+    {
+
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MODULES_JS_PATH, $installer->basePath);
+
+        if (!is_link($installer->basePath.self::OPENEMR_MODULES_JS_PATH.$jsFolder)) {
+            //  $installer->getRelativePath($target);
+            symlink($baseTarget . $relativeTarget ,$installer->basePath.self::OPENEMR_MODULES_JS_PATH.$jsFolder);
+            Installer::messageToCLI("Create link to JS for module - $jsFolder");
+            $installer->appendToGitignore($jsFolder, self::OPENEMR_MODULES_JS_PATH);
+        }
+    }
+
+    static function createCssLink(Installer $installer, $relativeTarget , $cssFolder)
+    {
+
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MODULES_CSS_PATH, $installer->basePath);
+
+        if (!is_link($installer->basePath.self::OPENEMR_MODULES_CSS_PATH.$cssFolder)) {
+            //  $installer->getRelativePath($target);
+            symlink($baseTarget . $relativeTarget ,$installer->basePath.self::OPENEMR_MODULES_CSS_PATH.$cssFolder);
+            Installer::messageToCLI("Create link to JS for module - $cssFolder");
+            $installer->appendToGitignore($cssFolder, self::OPENEMR_MODULES_CSS_PATH);
+        }
     }
 
     static function addToApplicationConf(Installer $installer, $moduleName)

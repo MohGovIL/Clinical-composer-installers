@@ -144,12 +144,6 @@ class Installer extends ComposerInstaller
         //$projectPath = strpos($this->getInstallPath($target), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
         $projectPath = $this->getInstallPath($target);
 
-        //get a last version of the package before update, the upgrade sql/acl will begin from this point (for dev from git and for prod a version from composer json)
-        $lastTag = $initial->isDev() ? $this->getLastTag($projectPath) : $initial->getPrettyVersion();
-        preg_match('/\w+_(\d+)_(\d+)_(\d+)/',  $lastTag, $matches);
-        $tagVersion = $matches[1] . '.' . $matches[2] . '.' . $matches[3];
-        //$lastTag = substr($lastTag,1,strlen($lastTag));
-        echo $target->getType();
         //spacial actions per package type
         switch ($target->getType())
         {
