@@ -263,18 +263,6 @@ class VerticalAddonsActions
             if(strpos($job, '#') === 0 || empty($job))continue;
             //append job if not exist
 
-            if(strpos($job, '<INSTALLATION_URL>') !== false){
-                $job = str_replace('<INSTALLATION_URL>', $installer->installName, $job);
-            }
-
-            if(strpos($job, '<UBUNTU_USER>') !== false){
-                $job = str_replace('<UBUNTU_USER>', $ubuntuUser, $job);
-            }
-
-            if(strpos($job, '<ZF2_INDEX_PHP>') !== false){
-                $job = str_replace('<ZF2_INDEX_PHP>', $installer->basePath.'interface/modules/zend_modules/public/index.php', $job);
-            }
-
             $job = $job . ' >> ' . $installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG;
 
             if (!in_array($job, $existJobs)){
