@@ -263,7 +263,7 @@ class VerticalAddonsActions
             if(strpos($job, '#') === 0 || empty($job))continue;
             //append job if not exist
 
-            $job = $job . ' >> ' . $installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG;
+            $job = $job . " >> <INSTALLATION_PATH>/clinikal/" . self::CLINIKAL_CRONJOB_LOG;
 
             if (!in_array($job, $existJobs)){
 
