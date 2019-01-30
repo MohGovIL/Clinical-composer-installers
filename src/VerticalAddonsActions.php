@@ -85,7 +85,7 @@ class VerticalAddonsActions
                 Zf2ModulesActions::createJsLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module.'/js/'. strtolower($module), strtolower($module));
             }
             if (is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH . $module . '/css')) {
-                Zf2ModulesActions::createJsLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module.'/css/'. strtolower($module), strtolower($module));
+                Zf2ModulesActions::createCssLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_MODULES_FOLDER_PATH.$module.'/css/'. strtolower($module), strtolower($module));
             }
         }
 
