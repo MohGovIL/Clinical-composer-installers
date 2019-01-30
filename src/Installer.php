@@ -71,13 +71,42 @@ class Installer extends ComposerInstaller
 
         if($this->getPrefix($package->getType()) !== 'clinikal') return;
 
+        $this->buildLinks($package);
+
+        self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
+    {
+
+        $this->initClinikal();
+
+        // composer update
+        LibraryInstaller::update($repo,$initial, $target);
+
+        if($this->getPrefix($initial->getType()) !== 'clinikal') return;
+
+        $this->buildLinks($target);
+
+        // change branch to track remote composer branch
+
+        self::messageToCLI('----- UPDATE ' . strtoupper($target->getName()) . ' WAS FINISHED ------' . PHP_EOL);
+
+    }
+
+    private function buildLinks(PackageInterface $package) {
+
         //spacial actions per package type
         switch ($package->getType())
         {
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
-                                break;
+                break;
             case self::ZF_MODULES:
                 Zf2ModulesActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 break;
@@ -104,7 +133,7 @@ class Installer extends ComposerInstaller
 
         }
 
-       // $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
+        // $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
         $projectPath = $this->getInstallPath($package);
 
         //create links for git hooks
@@ -122,78 +151,9 @@ class Installer extends ComposerInstaller
 
             //links for hooks fit for new repos (hook might overwrite a more "permissive" hook)
             $this->createHookLink($newReposTargetDir, $linkDir, true);
+
+            shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
         }
-
-        self::messageToCLI('----- INSTALL ' . strtoupper($package->getPrettyName()) . ' WAS FINISHED ------' . PHP_EOL);
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    public function update(InstalledRepositoryInterface $repo, PackageInterface $initial, PackageInterface $target)
-    {
-
-        $this->initClinikal();
-
-        // composer update
-        LibraryInstaller::update($repo,$initial, $target);
-
-        if($this->getPrefix($initial->getType()) !== 'clinikal') return;
-
-        //$projectPath = strpos($this->getInstallPath($target), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($target)) : $this->getInstallPath($target);
-        $projectPath = $this->getInstallPath($target);
-
-        //spacial actions per package type
-        switch ($target->getType())
-        {
-            case self::FORMHANDLER_FORMS:
-                FormhandlerActions::linkToCouchDbJson($this, $target);
-                break;
-            case self::VERTICAL_PACKAGE;
-                # install zf2 modules
-                VerticalAddonsActions::installUpdateModules($this,$target);
-                # install forms
-                VerticalAddonsActions::installUpdateForms($this,$target);
-                # link to json of vertical menu
-                VerticalAddonsActions::createMenuLink($this,$target);
-                # append cron jobs
-                VerticalAddonsActions::appendCronJobs($this,$target);
-                # link to css file
-                VerticalAddonsActions::createCssLink($this,$target);
-
-                VerticalAddonsActions::createDocumentsLinks($this,$target);
-
-                # links for sql and acl install
-                VerticalAddonsActions::createSqlLinks($this,$target);
-                VerticalAddonsActions::createAclLinks($this,$target);
-                break;
-        }
-
-        //create links for git hooks
-        if ($this->clinikalEnv == 'dev') {
-            $targetDir = $this->clinikalPath . "ci/git-hooks/";
-            $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
-            $configFile = $this->clinikalPath . "config/";
-            $linkDir = $projectPath . "/.git/hooks/";
-
-            //create link to config in hooks dir (if does not already exist)
-            if(!is_link($linkDir . "clinikal.cfg")) {
-                symlink($configFile . "clinikal.cfg", $linkDir . "clinikal.cfg");
-            }
-
-            //links for more "permissive" hooks fit for old repos
-            $this->createHookLink($targetDir, $linkDir);
-
-            //links for hooks fit for new repos (hook might overwrite a more "permissive" hook)
-            //(note that they might already exist and therefore overwrite themselves but this is ok)
-            $this->createHookLink($newReposTargetDir, $linkDir, true);
-        }
-
-        // change branch to track remote composer branch
-        shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
-
-        self::messageToCLI('----- UPDATE ' . strtoupper($target->getName()) . ' WAS FINISHED ------' . PHP_EOL);
 
     }
 
