@@ -246,8 +246,7 @@ class VerticalAddonsActions
         if (!is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG)) {
             touch($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG);
         }
-        //load exist jobs into array
-        if(empty($installer->installName))return;
+
         $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
 
         foreach ($existJobs as $key => $job)
@@ -262,8 +261,6 @@ class VerticalAddonsActions
         if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
         $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
 
-        //remove \n
-        $ubuntuUser = trim(shell_exec('whoami'));
 
         foreach ($verticalJobs as $key => $job)
         {    // clean comment lines
@@ -272,7 +269,8 @@ class VerticalAddonsActions
             //append job if not exist
 
             $job = $job . " >> <INSTALLATION_PATH>/clinikal/" . self::CLINIKAL_CRONJOB_LOG;
-
+            print_r($existJobs);
+            echo '   ' . $job;
             if (!in_array($job, $existJobs)){
 
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
