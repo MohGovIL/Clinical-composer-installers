@@ -248,14 +248,14 @@ class VerticalAddonsActions
         }
 
         $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
-
+        $cronJobs  = array();
         foreach ($existJobs as $key => $job)
         {   // clean comment lines
             //remove \n
             $job = trim($job);
-            if(strpos($job, '#') === 0 || empty($job))unset($existJobs[$key]);
+            if(strpos($job, '#') === 0 || empty($job))continue;
+            $cronJobs[] = $job;
         }
-        $existJobs = !empty($existJobs) ? array_values($existJobs) : array();
 
         //load vertical jobs into array
         if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
@@ -269,10 +269,9 @@ class VerticalAddonsActions
             //append job if not exist
 
             $job = $job . " >> <INSTALLATION_PATH>/clinikal/" . self::CLINIKAL_CRONJOB_LOG;
-            print_r($existJobs);
-            echo '   ' . $job;
-            if (!in_array($job, $existJobs)){
 
+            if (!in_array($job, $cronJobs)){
+                echo "new cron job added";
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
                 //blank line
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL, FILE_APPEND);
