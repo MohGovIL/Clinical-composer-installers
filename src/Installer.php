@@ -125,6 +125,8 @@ class Installer extends ComposerInstaller
                 # links for sql and acl install
                 VerticalAddonsActions::createSqlLinks($this,$package);
                 VerticalAddonsActions::createAclLinks($this,$package);
+                # link for custom assets
+                VerticalAddonsActions::createCustomYaml($this,$package);
                 break;
             case self::VERTICAL_DOCUMENTS:
 

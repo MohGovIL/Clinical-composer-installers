@@ -46,6 +46,9 @@ class VerticalAddonsActions
     const CLINIKAL_CRONJOB_LOG='logs/cron_jobs_log';
     const OPENEMR_DOCUMENTS_PATH = 'sites/default/documents/doctemplates/';
 
+    const OPENEMR_CUSTOM_ASSETS_YAML = 'custom/assets/custom.yaml';
+    const VERTICAL_CUSTOM_ASSETS_YAML='assets/custom.yaml';
+
 
     /**
      * Create link from theme's folder in the project to the new style of the vertical
@@ -283,6 +286,14 @@ class VerticalAddonsActions
                 chmod($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG, 0766);
                 $installer->appendToGitignore('clinikal/'.self::CLINIKAL_CRONJOB_LOG);
             }
+        }
+    }
+
+    static function createCustomYaml(Installer $installer, PackageInterface $package)
+    {
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML, $installer->basePath);
+        if (!is_link($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML)) {
+            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CUSTOM_ASSETS_YAML ,$installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML);
         }
     }
 }
