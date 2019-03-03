@@ -291,6 +291,8 @@ class VerticalAddonsActions
 
     static function createCustomYaml(Installer $installer, PackageInterface $package)
     {
+        if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CUSTOM_ASSETS_YAML)) return;
+
         $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML, $installer->basePath);
         if (!is_link($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML)) {
             symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CUSTOM_ASSETS_YAML ,$installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML);
