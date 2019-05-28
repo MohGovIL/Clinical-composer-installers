@@ -46,6 +46,9 @@ class VerticalAddonsActions
     const CLINIKAL_CRONJOB_LOG='logs/cron_jobs_log';
     const OPENEMR_DOCUMENTS_PATH = 'sites/default/documents/doctemplates/';
 
+    const OPENEMR_CUSTOM_ASSETS_YAML = 'custom/assets/custom.yaml';
+    const VERTICAL_CUSTOM_ASSETS_YAML='assets/custom.yaml';
+
 
     /**
      * Create link from theme's folder in the project to the new style of the vertical
@@ -246,24 +249,21 @@ class VerticalAddonsActions
         if (!is_file($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG)) {
             touch($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG);
         }
-        //load exist jobs into array
-        if(empty($installer->installName))return;
-        $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
 
+        $existJobs = file($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
+        $cronJobs  = array();
         foreach ($existJobs as $key => $job)
         {   // clean comment lines
             //remove \n
             $job = trim($job);
-            if(strpos($job, '#') === 0 || empty($job))unset($existJobs[$key]);
+            if(strpos($job, '#') === 0 || empty($job))continue;
+            $cronJobs[] = $job;
         }
-        $existJobs = !empty($existJobs) ? array_values($existJobs) : array();
 
         //load vertical jobs into array
         if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE)) return;
         $verticalJobs = file($installer->getInstallPath($package).'/' . self::VERTICAL_CRONJOB_FILE, FILE_SKIP_EMPTY_LINES);
 
-        //remove \n
-        $ubuntuUser = trim(shell_exec('whoami'));
 
         foreach ($verticalJobs as $key => $job)
         {    // clean comment lines
@@ -273,8 +273,8 @@ class VerticalAddonsActions
 
             $job = $job . " >> <INSTALLATION_PATH>/clinikal/" . self::CLINIKAL_CRONJOB_LOG;
 
-            if (!in_array($job, $existJobs)){
-
+            if (!in_array($job, $cronJobs)){
+                echo "new cron job added";
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL . $job, FILE_APPEND);
                 //blank line
                 file_put_contents($installer->clinikalPath.self::CLINIKAL_CRONJOB_FILE, PHP_EOL, FILE_APPEND);
@@ -286,6 +286,16 @@ class VerticalAddonsActions
                 chmod($installer->clinikalPath.self::CLINIKAL_CRONJOB_LOG, 0766);
                 $installer->appendToGitignore('clinikal/'.self::CLINIKAL_CRONJOB_LOG);
             }
+        }
+    }
+
+    static function createCustomYaml(Installer $installer, PackageInterface $package)
+    {
+        if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_CUSTOM_ASSETS_YAML)) return;
+
+        $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML, $installer->basePath);
+        if (!is_link($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML)) {
+            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CUSTOM_ASSETS_YAML ,$installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML);
         }
     }
 }
