@@ -8,6 +8,7 @@
 
 namespace Clinikal\ComposerInstallersClinikalExtender;
 
+use Clinikal\ComposerInstallersClinikalExtender\VerticalAddonsActions;
 use Composer\Installer\LibraryInstaller;
 use Composer\Installers\Installer as ComposerInstaller;
 use Composer\Package\PackageInterface;
@@ -127,6 +128,8 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createAclLinks($this,$package);
                 # link for custom assets
                 VerticalAddonsActions::createCustomYaml($this,$package);
+                # link for user guide
+                VerticalAddonsActions::userGuideLInk($this,$package);
                 break;
             case self::VERTICAL_DOCUMENTS:
 

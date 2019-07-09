@@ -8,8 +8,8 @@
 
 namespace Clinikal\ComposerInstallersClinikalExtender;
 
-use Composer\Package\PackageInterface;
 use Clinikal\ComposerInstallersClinikalExtender\Installer;
+use Composer\Package\PackageInterface;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 
@@ -49,6 +49,8 @@ class VerticalAddonsActions
     const OPENEMR_CUSTOM_ASSETS_YAML = 'custom/assets/custom.yaml';
     const VERTICAL_CUSTOM_ASSETS_YAML='assets/custom.yaml';
 
+    const CLINIKAL_VERTICAL_USER_GUIDE = 'user_guide/user_guide.pdf';
+    const VERTICAL_USER_GUIDE='user_guide/user_guide.pdf';
 
     /**
      * Create link from theme's folder in the project to the new style of the vertical
@@ -296,6 +298,16 @@ class VerticalAddonsActions
         $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML, $installer->basePath);
         if (!is_link($installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML)) {
             symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CUSTOM_ASSETS_YAML ,$installer->basePath.self::OPENEMR_CUSTOM_ASSETS_YAML);
+        }
+    }
+
+    static function userGuideLInk(Installer $installer, PackageInterface $package)
+    {
+        if(!is_file($installer->getInstallPath($package).'/' . self::VERTICAL_USER_GUIDE)) return;
+
+        $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_VERTICAL_USER_GUIDE, $installer->basePath);
+        if (!is_link($installer->clinikalPath.self::CLINIKAL_VERTICAL_USER_GUIDE)) {
+            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_USER_GUIDE ,$installer->clinikalPath.self::CLINIKAL_VERTICAL_USER_GUIDE);
         }
     }
 }
