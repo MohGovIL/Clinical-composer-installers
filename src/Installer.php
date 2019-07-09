@@ -14,7 +14,6 @@ use Composer\Installers\Installer as ComposerInstaller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
-use Clinikal\ComposerInstallersClinikalExtender\VerticalAddonsActions;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 
 /**
