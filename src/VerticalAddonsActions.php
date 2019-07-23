@@ -30,7 +30,7 @@ class VerticalAddonsActions
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
     const VERTICAL_SQL_FOLDER_PATH='sql/';
-    const VERTICAL_SQL_PROCEDURES_PATH='sql/strored_procedures/';
+    const VERTICAL_SQL_PROCEDURES_PATH='sql/stored_procedures/';
     const VERTICAL_SQL_ZERO_FOLDER_PATH='sql/zero/';
     const VERTICAL_ACL_FOLDER_PATH='acl/';
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
@@ -38,7 +38,7 @@ class VerticalAddonsActions
 
     const CLINIKAL_SQL_INSTALL_FILE='install/sql/verticalAddons.sql';
     const CLINIKAL_SQL_INSTALL_DATA_FILE='install/sql/verticalData.sql';
-    const CLINIKAL_SQL_INSTALL_PROCEDURES='install/sql/strored_procedures/';
+    const CLINIKAL_SQL_INSTALL_PROCEDURES='install/sql/stored_procedures/';
     const CLINIKAL_SQL_UPGRADE_FOLDER='install/upgrade/vertical/sql/';
     const CLINIKAL_SQL_ZERO_UPGRADE_FOLDER='install/upgrade/vertical/zero_sql/';
     const CLINIKAL_ACL_INSTALL_FILE='install/acl/acl_vertical_addons.php';
