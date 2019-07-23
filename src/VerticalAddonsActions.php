@@ -30,6 +30,7 @@ class VerticalAddonsActions
     const VERTICAL_FORMS_FOLDER_PATH='forms/';
     const VERTICAL_MODULES_FOLDER_PATH='modules/';
     const VERTICAL_SQL_FOLDER_PATH='sql/';
+    const VERTICAL_SQL_PROCEDURES_PATH='sql/strored_procedures/';
     const VERTICAL_SQL_ZERO_FOLDER_PATH='sql/zero/';
     const VERTICAL_ACL_FOLDER_PATH='acl/';
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
@@ -37,6 +38,7 @@ class VerticalAddonsActions
 
     const CLINIKAL_SQL_INSTALL_FILE='install/sql/verticalAddons.sql';
     const CLINIKAL_SQL_INSTALL_DATA_FILE='install/sql/verticalData.sql';
+    const CLINIKAL_SQL_INSTALL_PROCEDURES='install/sql/strored_procedures/';
     const CLINIKAL_SQL_UPGRADE_FOLDER='install/upgrade/vertical/sql/';
     const CLINIKAL_SQL_ZERO_UPGRADE_FOLDER='install/upgrade/vertical/zero_sql/';
     const CLINIKAL_ACL_INSTALL_FILE='install/acl/acl_vertical_addons.php';
@@ -212,6 +214,19 @@ class VerticalAddonsActions
             }
         }
 
+        /* procedurs and triggers */
+        if (is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_PROCEDURES_PATH)) {
+            $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_PROCEDURES, $installer->basePath);
+            $sqlProceduresFiles = glob($installer->getInstallPath($package).'/'.self::VERTICAL_SQL_PROCEDURES_PATH.'*.sql');
+            foreach($sqlProceduresFiles as $sqlFile) {
+                $fileName = pathinfo($sqlFile, PATHINFO_BASENAME);
+                if (!is_link($installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_PROCEDURES.$fileName)) {
+                    symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_SQL_PROCEDURES_PATH.$fileName  ,$installer->clinikalPath.self::CLINIKAL_SQL_INSTALL_PROCEDURES.$fileName);
+                    $installer->appendToGitignore(self::CLINIKAL_SQL_INSTALL_PROCEDURES.$fileName, 'clinikal/');
+                    Installer::messageToCLI("Create link to $fileName from stored procedured");
+                }
+            }
+        }
     }
 
     /**
