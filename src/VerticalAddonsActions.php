@@ -77,6 +77,7 @@ class VerticalAddonsActions
         }
 
         if(is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_COLORS_FOLDER_PATH)){
+            $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CSS_COLORS_PATH, $installer->basePath);
             $css_colors = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_COLORS_FOLDER_PATH);
             foreach ($css_colors as $scss_file){
                 if ( $scss_file === '.' || $scss_file === '..') continue;
