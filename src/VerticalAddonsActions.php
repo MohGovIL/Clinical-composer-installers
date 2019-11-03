@@ -36,6 +36,9 @@ class VerticalAddonsActions
     const VERTICAL_CRONJOB_FILE='cron/vertical_cron_jobs';
     const VERTICAL_MODULES_DOCUMENTS_PATH='doctemplates/';
 
+    const OPENEMR_CSS_COLORS_PATH = 'interface/themes/colors/';
+    const VERTICAL_CSS_COLORS_FOLDER_PATH='css/colors/';
+
     const CLINIKAL_SQL_INSTALL_FILE='install/sql/verticalAddons.sql';
     const CLINIKAL_SQL_INSTALL_DATA_FILE='install/sql/verticalData.sql';
     const CLINIKAL_SQL_INSTALL_PROCEDURES='install/sql/stored_procedures/';
@@ -72,6 +75,21 @@ class VerticalAddonsActions
             $installer->appendToGitignore(self::ZERO_OPENEMR_CSS_FILENAME, self::OPENEMR_CSS_PATH);
             Installer::messageToCLI("Create links to css files of the zero vertical");
         }
+
+        if(is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_COLORS_FOLDER_PATH)){
+            $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CSS_COLORS_PATH, $installer->basePath);
+            $css_colors = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_COLORS_FOLDER_PATH);
+            foreach ($css_colors as $scss_file){
+                if ( $scss_file === '.' || $scss_file === '..') continue;
+                $scssName = pathinfo($scss_file, PATHINFO_BASENAME);
+                if (!is_link($installer->basePath.self::OPENEMR_CSS_COLORS_PATH.$scssName)) {
+                    symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CSS_COLORS_FOLDER_PATH.$scssName ,$installer->basePath.self::OPENEMR_CSS_COLORS_PATH.$scssName);
+                    $installer->appendToGitignore($scssName, self::OPENEMR_CSS_COLORS_PATH);
+                    Installer::messageToCLI("Create links to scss files of the vertical");
+                }
+            }
+        }
+
     }
 
 
