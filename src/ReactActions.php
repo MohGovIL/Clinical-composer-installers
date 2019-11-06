@@ -6,8 +6,8 @@ namespace Clinikal\ComposerInstallersClinikalExtender;
 
 class ReactActions
 {
-    const SOURCE_REACT = 'react/';
-    const DEST_REACT = '../react/';
+    const SOURCE_REACT = 'clinikal-react/';
+    const DEST_REACT = '../clinikal-react/';
 
     static function createReactLInk(Installer $installer, PackageInterface $package)
     {
