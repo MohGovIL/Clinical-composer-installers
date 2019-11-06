@@ -3,6 +3,9 @@
 
 namespace Clinikal\ComposerInstallersClinikalExtender;
 
+use Clinikal\ComposerInstallersClinikalExtender\Installer;
+use Composer\Package\PackageInterface;
+
 
 class ReactActions
 {
