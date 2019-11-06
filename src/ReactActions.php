@@ -14,7 +14,10 @@ class ReactActions
 
     static function createReactLInk(Installer $installer, PackageInterface $package)
     {
-        if(!is_dir($installer->getInstallPath($package).'/' . self::SOURCE_REACT)) return;
+        if (!is_dir($installer->getInstallPath($package).'/' . self::SOURCE_REACT)) return;
+        if (!is_dir($installer->basePath.self:: DEST_REACT)) {
+            mkdir($installer->basePath.self:: DEST_REACT);
+        }
 
         $baseTarget = Installer::getRelativePathBetween($installer->basePath.self:: DEST_REACT, $installer->basePath);
         if (!is_link($installer->basePath.self::DEST_REACT)) {
