@@ -15,7 +15,7 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
-
+use Clinikal\ComposerInstallersClinikalExtender\ReactActions;
 /**
  * Class Installer
  * This class extends a functionality of the install and update commands of composer
@@ -142,7 +142,7 @@ class Installer extends ComposerInstaller
                 # link for custom assets
                 VerticalAddonsActions::createCustomYaml($this,$package);
                 # link for react project
-
+                ReactActions::createReactLInk($this,$package);
         }
 
         // $projectPath = strpos($this->getInstallPath($package), $this->basePath) !== false ? str_replace($this->basePath,'', $this->getInstallPath($package)) : $this->getInstallPath($package);
