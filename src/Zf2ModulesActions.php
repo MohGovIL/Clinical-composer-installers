@@ -34,7 +34,7 @@ class Zf2ModulesActions
           //  $installer->getRelativePath($target);
             symlink($baseTarget . $relativeTarget ,$installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName);
             Installer::messageToCLI("Create link to module - $moduleName");
-            self::addToApplicationConf($installer,$moduleName);
+            //self::addToApplicationConf($installer,$moduleName);
             $installer->appendToGitignore($moduleName, self::OPENEMR_MODULES_PATH);
         }
     }
@@ -68,10 +68,10 @@ class Zf2ModulesActions
     static function addToApplicationConf(Installer $installer, $moduleName)
     {
 
-        $configs = require $installer->basePath.self::APPLICATION_CONF_PATH;
+       /* $configs = require $installer->basePath.self::APPLICATION_CONF_PATH;
         $configs['modules'][] = $moduleName;
         file_put_contents($installer->basePath.self::APPLICATION_CONF_PATH,'<?php return ' . var_export($configs,true) . ';');
-        $installer::messageToCLI('Adding module ' . $moduleName . ' to application.config.php');
+        $installer::messageToCLI('Adding module ' . $moduleName . ' to application.config.php');*/
     }
 
 }

@@ -8,12 +8,12 @@
 
 namespace Clinikal\ComposerInstallersClinikalExtender;
 
+use Clinikal\ComposerInstallersClinikalExtender\VerticalAddonsActions;
 use Composer\Installer\LibraryInstaller;
 use Composer\Installers\Installer as ComposerInstaller;
 use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
-use Clinikal\ComposerInstallersClinikalExtender\VerticalAddonsActions;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
 
 /**
@@ -127,6 +127,8 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createAclLinks($this,$package);
                 # link for custom assets
                 VerticalAddonsActions::createCustomYaml($this,$package);
+                # link for user guide
+                VerticalAddonsActions::userGuideLInk($this,$package);
                 break;
             case self::REACT_PROJECT:
                 # install zf2 modules
