@@ -10,7 +10,7 @@ use Composer\Package\PackageInterface;
 class ReactActions
 {
     const SOURCE_REACT = 'clinikal-react/';
-    const DEST_REACT = '../clinikal-react';
+    const DEST_REACT = 'clinikal-react';
 
     static function createReactLInk(Installer $installer, PackageInterface $package)
     {
