@@ -8,6 +8,7 @@
 
 namespace Clinikal\ComposerInstallersClinikalExtender;
 
+use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 use Clinikal\ComposerInstallersClinikalExtender\Installer;
 use Composer\Package\PackageInterface;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
@@ -124,13 +125,14 @@ class VerticalAddonsActions
      */
     static function installUpdateForms(Installer $installer, PackageInterface $package)
     {
-        $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
-        foreach($forms as $form) {
-            if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
-            FormhandlerActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
-            FormhandlerActions::linkToCouchDbJson($installer, $form);
+        if(is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH)) {
+            $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
+            foreach($forms as $form) {
+                if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
+                FormhandlerActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
+                FormhandlerActions::linkToCouchDbJson($installer, $form);
+            }
         }
-
     }
 
 
