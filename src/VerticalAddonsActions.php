@@ -12,7 +12,6 @@ use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 use Clinikal\ComposerInstallersClinikalExtender\Installer;
 use Composer\Package\PackageInterface;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
-use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 
 class VerticalAddonsActions
 {
