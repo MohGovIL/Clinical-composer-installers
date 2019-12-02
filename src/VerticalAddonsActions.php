@@ -255,6 +255,8 @@ class VerticalAddonsActions
      */
     static function createAclLinks(Installer $installer, PackageInterface $package)
     {
+        if(!is_dir($installer->getInstallPath($package).'/acl'))return;
+
         $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_ACL_INSTALL_FILE, $installer->basePath);
         if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE)) {
             symlink($baseTarget.$installer->getRelativePath($package). '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_install.php', $installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE);
