@@ -129,20 +129,11 @@ class Installer extends ComposerInstaller
                 VerticalAddonsActions::createCustomYaml($this,$package);
                 # link for user guide
                 VerticalAddonsActions::userGuideLInk($this,$package);
+                break;
+            case self::REACT_PROJECT:
                 # link for react project
                 ReactActions::createReactLInk($this,$package);
                 break;
-            /*case self::REACT_PROJECT:
-                # install zf2 modules
-                VerticalAddonsActions::installUpdateModules($this,$package);
-                # link to css file
-                VerticalAddonsActions::createCssLink($this,$package);
-                # link to json of vertical menu
-                VerticalAddonsActions::createMenuLink($this,$package);
-                # append cron jobs
-                VerticalAddonsActions::appendCronJobs($this,$package);
-                # link for custom assets
-                VerticalAddonsActions::createCustomYaml($this,$package);*/
 
         }
 
