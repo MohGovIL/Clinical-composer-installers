@@ -8,10 +8,10 @@
 
 namespace Clinikal\ComposerInstallersClinikalExtender;
 
+use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 use Clinikal\ComposerInstallersClinikalExtender\Installer;
 use Composer\Package\PackageInterface;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
-use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 
 class VerticalAddonsActions
 {
@@ -124,13 +124,14 @@ class VerticalAddonsActions
      */
     static function installUpdateForms(Installer $installer, PackageInterface $package)
     {
-        $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
-        foreach($forms as $form) {
-            if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
-            FormhandlerActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
-            FormhandlerActions::linkToCouchDbJson($installer, $form);
+        if(is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH)) {
+            $forms = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH);
+            foreach($forms as $form) {
+                if (!is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH . $form) || $form === '.' || $form === '..')continue;
+                FormhandlerActions::createLink($installer, $installer->getRelativePath($package).'/'.self::VERTICAL_FORMS_FOLDER_PATH.$form, $form);
+                FormhandlerActions::linkToCouchDbJson($installer, $form);
+            }
         }
-
     }
 
 
@@ -254,6 +255,8 @@ class VerticalAddonsActions
      */
     static function createAclLinks(Installer $installer, PackageInterface $package)
     {
+        if(!is_dir($installer->getInstallPath($package).'/acl'))return;
+
         $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_ACL_INSTALL_FILE, $installer->basePath);
         if (!is_link($installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE)) {
             symlink($baseTarget.$installer->getRelativePath($package). '/' . self::VERTICAL_ACL_FOLDER_PATH . 'acl_install.php', $installer->clinikalPath . self::CLINIKAL_ACL_INSTALL_FILE);

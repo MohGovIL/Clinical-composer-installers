@@ -15,7 +15,7 @@ use Composer\Package\PackageInterface;
 use Composer\Repository\InstalledRepositoryInterface ;
 use Clinikal\ComposerInstallersClinikalExtender\FormhandlerActions;
 use Clinikal\ComposerInstallersClinikalExtender\Zf2ModulesActions;
-
+use Clinikal\ComposerInstallersClinikalExtender\ReactActions;
 /**
  * Class Installer
  * This class extends a functionality of the install and update commands of composer
@@ -27,7 +27,7 @@ class Installer extends ComposerInstaller
     const VERTICAL_PACKAGE = 'clinikal-vertical';
     const ZF_MODULES = 'clinikal-zf-modules';
     const FORMHANDLER_FORMS = 'clinikal-formhandler-forms';
-    const VERTICAL_DOCUMENTS = 'clinikal-vertical-documents';
+    const REACT_PROJECT = 'clinikal-react';
 
 
     const RED="\033[31m";
@@ -110,7 +110,7 @@ class Installer extends ComposerInstaller
             case self::ZF_MODULES:
                 Zf2ModulesActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
                 break;
-            case self::VERTICAL_PACKAGE;
+            case self::VERTICAL_PACKAGE:
                 # install zf2 modules
                 VerticalAddonsActions::installUpdateModules($this,$package);
                 # install forms
@@ -130,10 +130,10 @@ class Installer extends ComposerInstaller
                 # link for user guide
                 VerticalAddonsActions::userGuideLInk($this,$package);
                 break;
-            case self::VERTICAL_DOCUMENTS:
-
+            case self::REACT_PROJECT:
+                # link for react project
+                ReactActions::createReactLInk($this,$package);
                 break;
-
 
         }
 
