@@ -1,5 +1,5 @@
 {
-  "name": "israeli-moh/composer-installers-clinikal-extender",
+  "name": "clinikal/composer-installers-clinikal-extender",
   "description": "Extend the composer/installers plugin to enable custom behavior for clinikal packages.",
   "type": "composer-plugin",
   "authors": [
