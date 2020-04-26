@@ -52,7 +52,7 @@ class Installer extends ComposerInstaller
 
         $this->basePath = dirname($this->vendorDir) .'/';
 
-        $this->clinikalPath = $this->basePath . 'clinikal/';
+        //$this->clinikalPath = $this->basePath . 'clinikal/';
         //require functions for db connection form 'clinikal' folder
 
         $this->setEnvSettings();
@@ -120,15 +120,14 @@ class Installer extends ComposerInstaller
                 # link to json of vertical menu
                 VerticalAddonsActions::createMenuLink($this,$package);
                 # append cron jobs
-                VerticalAddonsActions::appendCronJobs($this,$package);
-                VerticalAddonsActions::createDocumentsLinks($this,$package);
+                //VerticalAddonsActions::appendCronJobs($this,$package);
                 # links for sql and acl install
-                VerticalAddonsActions::createSqlLinks($this,$package);
-                VerticalAddonsActions::createAclLinks($this,$package);
+                //VerticalAddonsActions::createSqlLinks($this,$package);
+                //VerticalAddonsActions::createAclLinks($this,$package);
                 # link for custom assets
                 VerticalAddonsActions::createCustomYaml($this,$package);
                 # link for user guide
-                VerticalAddonsActions::userGuideLInk($this,$package);
+                //VerticalAddonsActions::userGuideLInk($this,$package);
                 break;
             case self::REACT_PROJECT:
                 # link for react project
@@ -141,7 +140,7 @@ class Installer extends ComposerInstaller
         $projectPath = $this->getInstallPath($package);
 
         //create links for git hooks
-        if ($this->clinikalEnv == 'dev') {
+       /* if ($this->clinikalEnv == 'dev') {
             $targetDir = $this->clinikalPath . "ci/git-hooks/";
             $newReposTargetDir = $this->clinikalPath . "ci/git-hooks/new-repos/";
             $configFile = $this->clinikalPath . "config/";
@@ -157,7 +156,7 @@ class Installer extends ComposerInstaller
             $this->createHookLink($newReposTargetDir, $linkDir, true);
 
             shell_exec("cd $projectPath && git branch `git rev-parse --abbrev-ref HEAD` -u composer/`git rev-parse --abbrev-ref HEAD`");
-        }
+        }*/
 
     }
 
