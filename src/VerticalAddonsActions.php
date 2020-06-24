@@ -23,7 +23,7 @@ class VerticalAddonsActions
     const ZERO_OPENEMR_CSS_FILENAME = 'clinikal_zero_fixes.scss';
     const ZERO_CSS_ORIGIN_NAME='clinikal_zero_fixes.scss';
 
-    const OPENEMR_MENUS_PATH = 'sites/default/documents/custom_menus/';
+    const OPENEMR_MENUS_PATH = 'interface/main/tabs/menu/menus/';
     const VERTICAL_MENUS_FOLDER_PATH='menus/';
     const PATIENT_MENUS_FOLDER = 'patient_menus/';
 
