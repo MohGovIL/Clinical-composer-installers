@@ -105,7 +105,7 @@ class Installer extends ComposerInstaller
         {
             case self::FORMHANDLER_FORMS:
                 FormhandlerActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
-                FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
+                //FormhandlerActions::linkToCouchDbJson($this, explode('/',$package->getName())[1]);
                 break;
             case self::ZF_MODULES:
                 Zf2ModulesActions::createLink($this, $this->getInstallPath($package), explode('/',$package->getName())[1]);
