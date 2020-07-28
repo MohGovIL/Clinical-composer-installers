@@ -54,6 +54,9 @@ class VerticalAddonsActions
     const OPENEMR_CUSTOM_ASSETS_YAML = 'custom/assets/custom.yaml';
     const VERTICAL_CUSTOM_ASSETS_YAML='assets/custom.yaml';
 
+    const OPENEMR_CUSTOM_MODULES_PATH = 'interface/modules/custom_modules/';
+    const VERTICAL_CUSTOM_MODULES_PATH='custom_modules/';
+
     const CLINIKAL_VERTICAL_USER_GUIDE = 'user_guide/user_guide.pdf';
     const VERTICAL_USER_GUIDE='user_guide/user_guide.pdf';
 
@@ -344,6 +347,22 @@ class VerticalAddonsActions
         $baseTarget = Installer::getRelativePathBetween($installer->clinikalPath.self::CLINIKAL_VERTICAL_USER_GUIDE, $installer->basePath);
         if (!is_link($installer->clinikalPath.self::CLINIKAL_VERTICAL_USER_GUIDE)) {
             symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_USER_GUIDE ,$installer->clinikalPath.self::CLINIKAL_VERTICAL_USER_GUIDE);
+        }
+    }
+
+    static function createCustomModule(Installer $installer, PackageInterface $package)
+    {
+        if(is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_CUSTOM_MODULES_PATH)){
+            $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CUSTOM_MODULES_PATH, $installer->basePath);
+            $modules = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_CUSTOM_MODULES_PATH);
+            foreach ($modules as $module){
+                if ( !is_dir($module)) continue;
+                if (!is_link($installer->basePath.self::OPENEMR_CUSTOM_MODULES_PATH.$module)) {
+                    symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CUSTOM_MODULES_PATH.$module ,$installer->basePath.self::OPENEMR_CUSTOM_MODULES_PATH.$module);
+                    $installer->appendToGitignore($module, self::OPENEMR_CUSTOM_MODULES_PATH);
+                    Installer::messageToCLI("Link to custom module $module was created");
+                }
+            }
         }
     }
 }

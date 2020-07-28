@@ -126,6 +126,7 @@ class Installer extends ComposerInstaller
                 //VerticalAddonsActions::createAclLinks($this,$package);
                 # link for custom assets
                 VerticalAddonsActions::createCustomYaml($this,$package);
+                VerticalAddonsActions::createCustomModule($this,$package);
                 # link for user guide
                 //VerticalAddonsActions::userGuideLInk($this,$package);
                 break;
