@@ -18,6 +18,8 @@ class VerticalAddonsActions
 
     const OPENEMR_CSS_PATH = 'interface/themes/';
     const VERTICAL_CSS_FOLDER_PATH='css/';
+    const OPENEMR_CSS_LINK_CLINIKAL = 'clinikal.scss';
+    const OPENEMR_CSS_TARGET_CLINIKAL = 'clinikal.scss';
     const OPENEMR_CSS_FILENAME = 'clinikal_fixes.scss';
     const CSS_ORIGIN_NAME='clinikal_fixes.scss';
     const ZERO_OPENEMR_CSS_FILENAME = 'clinikal_zero_fixes.scss';
@@ -68,15 +70,48 @@ class VerticalAddonsActions
     static function createCssLink(Installer $installer, PackageInterface $package)
     {
         $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME, $installer->basePath);
-        if (!is_link($installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME)) {
-            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::OPENEMR_CSS_FILENAME);
-            $installer->appendToGitignore(self::OPENEMR_CSS_FILENAME, self::OPENEMR_CSS_PATH);
-            Installer::messageToCLI("Create links to css files of the vertical");
+        if(is_file($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH. self::OPENEMR_CSS_TARGET_CLINIKAL)) {
+            if (!is_link($installer->basePath . self::OPENEMR_CSS_PATH
+                . self::OPENEMR_CSS_LINK_CLINIKAL)
+            ) {
+                symlink($baseTarget . $installer->getRelativePath($package)
+                    . '/' . self::VERTICAL_CSS_FOLDER_PATH
+                    . self::OPENEMR_CSS_TARGET_CLINIKAL,
+                    $installer->basePath . self::OPENEMR_CSS_PATH
+                    . self::OPENEMR_CSS_LINK_CLINIKAL);
+                $installer->appendToGitignore(self::OPENEMR_CSS_LINK_CLINIKAL,
+                    self::OPENEMR_CSS_PATH);
+                Installer::messageToCLI("Create links to clinikal.scss files of the vertical");
+            }
         }
-        if (!is_link($installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME)) {
-            symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH.self::ZERO_CSS_ORIGIN_NAME ,$installer->basePath.self::OPENEMR_CSS_PATH.self::ZERO_OPENEMR_CSS_FILENAME);
-            $installer->appendToGitignore(self::ZERO_OPENEMR_CSS_FILENAME, self::OPENEMR_CSS_PATH);
-            Installer::messageToCLI("Create links to css files of the zero vertical");
+        if(is_file($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH. self::CSS_ORIGIN_NAME)) {
+            if (!is_link($installer->basePath . self::OPENEMR_CSS_PATH
+                . self::OPENEMR_CSS_FILENAME)
+            ) {
+                symlink($baseTarget . $installer->getRelativePath($package)
+                    . '/' . self::VERTICAL_CSS_FOLDER_PATH
+                    . self::CSS_ORIGIN_NAME,
+                    $installer->basePath . self::OPENEMR_CSS_PATH
+                    . self::OPENEMR_CSS_FILENAME);
+                $installer->appendToGitignore(self::OPENEMR_CSS_FILENAME,
+                    self::OPENEMR_CSS_PATH);
+                Installer::messageToCLI("Create links to css files of the vertical");
+            }
+        }
+        if(is_file($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_FOLDER_PATH. self::ZERO_CSS_ORIGIN_NAME)) {
+
+            if (!is_link($installer->basePath . self::OPENEMR_CSS_PATH
+                . self::ZERO_OPENEMR_CSS_FILENAME)
+            ) {
+                symlink($baseTarget . $installer->getRelativePath($package)
+                    . '/' . self::VERTICAL_CSS_FOLDER_PATH
+                    . self::ZERO_CSS_ORIGIN_NAME,
+                    $installer->basePath . self::OPENEMR_CSS_PATH
+                    . self::ZERO_OPENEMR_CSS_FILENAME);
+                $installer->appendToGitignore(self::ZERO_OPENEMR_CSS_FILENAME,
+                    self::OPENEMR_CSS_PATH);
+                Installer::messageToCLI("Create links to css files of the zero vertical");
+            }
         }
 
         if(is_dir($installer->getInstallPath($package).'/'.self::VERTICAL_CSS_COLORS_FOLDER_PATH)){
