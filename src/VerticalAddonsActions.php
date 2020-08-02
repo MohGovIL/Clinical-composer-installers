@@ -391,7 +391,9 @@ class VerticalAddonsActions
             $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_CUSTOM_MODULES_PATH, $installer->basePath);
             $modules = scandir($installer->getInstallPath($package).'/'.self::VERTICAL_CUSTOM_MODULES_PATH);
             foreach ($modules as $module){
+
                 if ( !is_dir($module)) continue;
+                if ( $module === '.' || $module === '..') continue;
                 if (!is_link($installer->basePath.self::OPENEMR_CUSTOM_MODULES_PATH.$module)) {
                     symlink($baseTarget.$installer->getRelativePath($package).'/'.self::VERTICAL_CUSTOM_MODULES_PATH.$module ,$installer->basePath.self::OPENEMR_CUSTOM_MODULES_PATH.$module);
                     $installer->appendToGitignore($module, self::OPENEMR_CUSTOM_MODULES_PATH);
