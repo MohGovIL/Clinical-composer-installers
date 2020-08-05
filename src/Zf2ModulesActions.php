@@ -31,6 +31,12 @@ class Zf2ModulesActions
         $baseTarget = Installer::getRelativePathBetween($installer->basePath.self::OPENEMR_MODULES_PATH, $installer->basePath);
 
         if (!is_link($installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName)) {
+
+            //temporary solution for patient validation module
+            if (is_dir($installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName)) {
+                rename($installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName, $installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName . '_community');
+            }
+
           //  $installer->getRelativePath($target);
             symlink($baseTarget . $relativeTarget ,$installer->basePath.self::OPENEMR_MODULES_PATH.$moduleName);
             Installer::messageToCLI("Create link to module - $moduleName");
