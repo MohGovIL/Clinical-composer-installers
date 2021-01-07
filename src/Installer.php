@@ -276,8 +276,9 @@ class Installer extends ComposerInstaller
 
     public function getInstallPath( PackageInterface $package ) {
         $installer = new InstallerHelper( $package, $this->composer, $this->io );
-        $path = $installer->getInstallPath( $package, $package->getType() );
+       // $path = $installer->getInstallPath( $package, $package->getType() );
         // if the path is false, use the default installer path instead
+        return LibraryInstaller::getInstallPath( $package );
         return $path !== false ? $this->basePath.$path : LibraryInstaller::getInstallPath( $package );
     }
 
